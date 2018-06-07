@@ -1,0 +1,314 @@
+/*!
+ * Theme Name: WPChimp Countdown
+ * Theme URI: http://wpchimp.com/b/wpchimp-countdown-theme/
+ * Author: WPChimp
+ * Description: WPChimp Countdown is a responsive theme that you can use to build your pre-launch marketing site. It provides a countdown clock, lets you customize colors and allows you to use a form for capturing emails.
+ * Version: 1.2.6
+ * License: GNU General Public License v2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * Tags: responsive-layout, custom-menu, custom-colors, translation-ready, theme-options, editor-style, right-sidebar, threaded-comments
+ * Text Domain: wpchimpc-countdown
+ */
+
+@import "bootstrap/less/bootstrap.less";
+@import "common.less";
+
+body {
+    color: @fg;
+    background: @bg;
+}
+
+.container {
+    max-width: 960px;
+}
+
+.landing {
+    text-align: center;
+    .open-sans;
+    
+    h1, p, .counter {
+        display: block;
+        .open-sans;
+        font-weight: 300;
+        .center-block;
+
+        strong {
+            font-weight: 600;
+        }
+    }
+
+    .headline {
+        font-size: 48px;
+        margin: 20px 0;
+    }
+
+    .description {
+        font-size: 18px;
+        margin: 20px 0;
+    }
+
+    .counter {
+        font-size: 64px;
+        overflow: hidden;
+        height: @counter-size + 0.2;
+        margin: 40px 0;
+        text-shadow: 0px 0px 50px lighten(@highlight, 15%);
+        
+        .part {
+            display: inline-block;
+            width: @counter-size + 0.2;
+            height: @counter-size + 0.2;
+            border-radius: (@counter-size + 0.2) / 2;
+            line-height: @counter-size + 0.1;
+            text-align: center;
+            margin: 0;
+            margin-bottom: @counter-size;
+            border: 1px dashed;
+            border-color: darken(@bg, 40%);
+            overflow: hidden;
+        }
+        
+        .part when (luma(@bg) < 30%) {
+            border-color: lighten(@bg, 60%);
+        }
+    }
+
+    .signup-text {
+        margin: 10px 0;
+    }
+
+    .signup-form {
+        text-align: left;
+        display: inline-block;
+        width: auto;
+    }
+
+    @media (max-width: @screen-xs) {
+        .headline {
+            font-size: 32px;
+            margin: 10px 0;
+        }
+
+        .description {
+            margin: 0px;
+        }
+
+        .counter {
+            font-size: 23px;
+            margin: 10px 0;
+        }
+    }
+
+    @media (max-width: @screen-sm) and (min-width: @screen-xs) {
+        .counter {
+            font-size: 36px;
+            margin: 10px 0;
+        }
+    }
+
+    @media (max-width: @screen-md) and (min-width: @screen-sm) {
+        .counter {
+            font-size: 56px;
+        }
+    }
+
+    @media (max-width: @screen-sm) {
+        .signup-form {
+            width: 90%;
+            text-align: center;
+            max-width: 20em;
+        }
+
+        .btn-primary {
+            float: none;
+            clear: both;
+        }
+    }
+}
+
+.landing-top-menu, .landing-footer-menu, .blog-footer-menu {
+    ul {
+        .list-unstyled;
+        margin: 10px 0;
+        padding: 0;
+
+        li {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 0;
+        }
+
+        .current-menu-item {
+            font-weight: 600;
+        }
+    }
+}
+
+.landing-top-menu {
+    .pull-right;
+}
+
+.landing-footer-menu, .blog-footer-menu {
+    text-align: center;
+}
+
+.landing-sidebars {
+    .make-row;
+    padding-top: 80px;
+    padding-bottom: 20px;
+
+    .left, .right {
+        .make-md-column(6);
+    }
+
+    .widget {
+        display: block;
+        margin: 20px 0;
+    }
+}
+
+.spaced {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.spaced-x2 {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+@media (max-width: @screen-sm) {
+    .spaced {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .spaced-x2 {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+}
+
+.footer-info {
+    padding: 40px 0;
+    text-align: center;
+
+    a.muted {
+        color: @fg !important;
+    }
+}
+
+.blog-title {
+    a {
+        color: @fg;
+    }
+}
+
+.blog-description {
+    .open-sans;
+    font-size: 18px;
+}
+
+.blog-top-menu {
+    .spaced;
+    ul {
+        .nav;
+        .nav-tabs;
+
+        .current-menu-item {
+            font-weight: 600;
+        }
+    }
+}
+
+.post-meta {
+    color: lighten(@fg, 40%);
+    display: block;
+    margin-bottom: 20px;
+}
+
+.blog-sidebar {
+    @media (min-width: @screen-sm) {
+        .pull-right;
+    }
+    
+    max-width: 270px;
+    
+    .widget {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+}
+
+.search-form {
+    .form-inline;
+
+    .label {
+        .form-group;
+    }
+
+    .search-field {
+        .form-control;
+    }
+
+    .search-submit {
+        .btn;
+        .btn-default;
+        vertical-align: top;
+    }
+}
+
+.comments {
+    .comment-count {
+        display: block;
+        border-bottom: 1px solid @hr-border;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+    ul {
+        .list-unstyled;
+        margin-left: 40px;
+    }
+
+    & > ul {
+        margin-left: 0 !important;
+    }
+
+    .comment {
+        padding: 10px;
+    }
+
+    .pingback {
+        .opacity(0.8);
+    }
+
+    .comment-respond {
+        p {
+            .form-group;
+        }
+        
+        input, textarea {
+            .form-control;
+            max-width: 400px;
+        }
+
+        .form-submit input {
+            .btn;
+            .btn-primary;
+            width: auto;
+        }
+
+        .comment-form-comment textarea {
+            height: 200px;
+        }
+
+        .form-allowed-tags {
+            .hidden;
+        }
+    }
+}

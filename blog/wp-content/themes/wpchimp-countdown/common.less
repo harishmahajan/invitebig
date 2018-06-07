@@ -1,0 +1,100 @@
+@import "variables.less";
+
+.aligned-block() {
+    .clearfix;
+    display: block !important;
+    margin: 10px;
+}
+
+a {
+    color: @highlight;
+
+    &:visited {
+        color: darken(@highlight, 5%);
+    }
+
+    &:hover {
+        color: lighten(@highlight, 10%);
+    }
+}
+
+hr {
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    .open-sans;
+    font-weight: 300;
+
+    a, a:hover, a:visited {
+        color: @fg;
+        text-decoration: none;
+    }
+
+    strong, b {
+        font-weight: 400;
+    }
+}
+
+.aligncenter {
+    display: block !important;
+    .center-block;
+    text-align: center;
+}
+
+.alignleft {
+    .pull-left;
+    .aligned-block;
+    text-align: left;
+}
+
+.alignright {
+    .pull-right;
+    .aligned-block;
+    text-align: right;
+}
+
+.wp-caption, .wp-caption-text, .gallery-caption {
+    .open-sans;
+}
+
+.sticky {
+    font-weight: normal; // Just so this makes it to the output.
+}
+
+.bypostauthor .comment-body {
+    border: 1px solid @hr-border;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.size-auto,
+.size-full,
+.size-large,
+.size-medium,
+.size-thumbnail {
+	max-width: 100%;
+	height: auto;
+}
+
+.screen-reader-text {
+    .sr-only;
+}
+
+.post-content {
+    .clearfix;
+
+    img {
+        .img-rounded;
+        max-width: 600px;
+        height: auto;
+    }
+
+    img.size-thumbnail, img.size-medium {
+        .img-thumbnail;
+    }
+
+    * {
+        max-width: 600px;
+    }
+}

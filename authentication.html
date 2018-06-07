@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){
+  function authCall()
+  {
+    document.getElementById('authorize-url').click();
+  }
+
+  var myurl = window.location.href;
+  if(myurl.indexOf("bookings#profile")>0)
+    var urls="../cal5.php";
+  else
+    var urls="cal5.php";
+
+  $.ajax({
+    url:urls,
+    type:'GET',
+    success:function(result)
+    {
+      $('#authorize-url').each(function() {
+        $(this).attr("href", result);
+      });
+      authCall();
+    }
+  });
+});
+</script>
+
+</head>
+<body>
+<a id="authorize-url" >Google Auth</a>
+</body>
+</html>

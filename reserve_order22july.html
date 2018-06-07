@@ -1,0 +1,317 @@
+<div class='container' id='invoiceContainer'>
+	<div class='panel'>
+		<div class='panel-body'>
+			<legend id='reservationTitle' style='text-align:center;border-bottom:0'></legend>
+			<div class='reservationreview form-horizontal'>
+				<div id='sectionResources' class='reservationBookedResources' style='margin-bottom:20px'>
+					<h4>Booked Resources</h4>
+					<hr>
+					<table class='table table-striped table-condensed'>
+						<thead><tr>
+							<th>Item Name</th>
+							<th>Booking Time</th>
+							<th>Price</th>
+						</tr></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div id='sectionAddons' class='reservationBookedAddons' style='margin-bottom:20px'>
+					<h4>Booked Add-ons</h4>
+					<hr>
+					<table class='table table-striped table-condensed'>
+						<thead><tr>
+							<th>Item Name</th>
+							<th>Delivered To</th>
+							<th>Delivered At</th>
+							<th>Quantity</th>
+							<th>Rate</th>
+							<th>Price</th>
+						</tr></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div id='sectionMenus' class='reservationBookedMenus' style='margin-bottom:20px'>
+					<h4>Booked Menus</h4>
+					<hr>
+					<table class='table table-striped table-condensed'>
+						<thead><tr>
+							<th>Item Name</th>
+							<th>Delivered At</th>
+							<th>Quantity</th>
+							<th>Rate</th>
+							<th>Price</th>
+						</tr></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div id='sectionPersonnel' class='reservationBookedPersonnel' style='margin-bottom:20px'>
+					<h4>Booked Personnel</h4>
+					<hr>
+					<table class='table table-striped table-condensed'>
+						<thead><tr>
+							<th>Personnel Name</th>
+							<th>Work-Hours</th>
+							<th>Rate</th>
+							<th>Price</th>
+						</tr></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div id='sectionPromos' class='reservationPromos' style='margin-bottom:20px'>
+					<h4>Promo Codes</h4>
+					<hr>
+					<table class='table table-striped table-condensed'>
+						<thead><tr>
+							<th>Promo Name</th>
+							<th>Description</th>
+							<th>Discount Amount</th>
+						</tr></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div class='row'>
+					<div class='col-md-8 reservationPolicyList' id='reservationPolicyList'></div>
+					<div class='col-md-4' id='reservationTotals'>
+						<h4>Subtotals</h4>
+						<hr>
+						<table class='table table-striped table-condensed'>
+							<thead><tr><th style='width:50%'>Category</th><th>Total Price</th></tr></thead>
+							<tbody>
+								<tr><td>Booked Resources</td><td id='reservationTotalsResources'></td></tr>
+								<tr><td>Booked Add-ons</td><td id='reservationTotalsAddons'></td></tr>
+								<tr><td>Booked Menu</td><td id='reservationTotalsMenus'></td></tr>
+								<tr><td>Booked Personnel</td><td id='reservationTotalsPersonnel'></td></tr>
+								<tr><td>Setup/Cleanup Fee</td><td id='reservationTotalsCleanup'></td></tr>
+								<tr><td>Booking Fee</td><td id='reservationTotalsBookingFee'></td></tr>
+								<tr><td>Promo Codes</td><td id='reservationTotalsPromos'></td></tr>
+								<tr><td>Taxes</td><td id='reservationTotalsTaxes'></td></tr>
+								<tr style='font-weight:bold'><td>Grand Total</td><td id='reservationTotalsGrand'></td></tr>
+								<tr style='height:20px'><td colspan=2></td></tr>
+								<tr><td>Non-Refundable Deposit Amount</td><td id='reservationTotalsDeposit' style='background-color:#EAE090'></td></tr>
+								<tr><td>Full payment due by</td><td id='reservationTotalsDue'></td></tr>
+								<tr><td style='vertical-align:middle'>Promo Code</td><td><div class='input-group'><input type='text' class='input form-control' id='reservationpromoCode' value='' placeholder='Enter Code...'><span class='input-group-btn'><button class='btn btn-md btn-default' id='btnApplypromoCode'>Add</button></span></div>	</td></tr>
+								<tr style='display:none'><td style='padding-top:13px'>Adjustment</td><td><input id='reservationTotalsAdjustment' type='text' class='input form-control' placeholder='0.00'/><div style='clear:both;margin:5px 2px;font-size:9px;font-style:italic'>Public users will not see this field</div></td></tr>
+								<tr><td>Gratuity</td><td><input id='reservationTotalsGratuity' type='text' class='input form-control' placeholder='0.00'/><div class='btn-group' style='margin:1px'><button class='btn btn-xs btn-default'>10%</button><button class='btn btn-xs btn-default'>15%</button><button class='btn btn-xs btn-default'>20%</button></div></td></tr>
+							</tbody>
+						</table>
+						<br>
+						<input id='reservationAgree' type='checkbox'> I accept the <a href='/terms' target='_blank'>InviteBIG Terms of Service</a> and the Venue Booking Terms specified on this page
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='clearfix' style='height:10px'></div>
+		<button class='btn btn-lg btn-primary pull-left' style='margin:10px auto auto 5%;width:100px' name='buttonReservationInfo'>Back</button>
+		<button class='btn btn-lg btn-primary pull-right' style='margin:10px 5% auto auto;width:150px' name='buttonReservationReserve'>Reserve</button>
+		<div class='clearfix'></div>
+	</div>
+</div>
+
+<div id='reserveRegistration' style='display:none'>
+
+<script>
+	
+	var booking = null;
+	var data = {method:'fGetSessionBooking'};
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success")
+			booking = $data['data'];
+		
+		if (booking)
+		{		
+			console.log("booking",booking);
+			InsertBookingNav(booking);
+			$("#reservationTitle").text("Reservation proposal for " + booking['info']['contact_email']);
+			if (booking['functionality']['gratuity'] != 1)
+				$("#reservationTotalsGratuity").parents("tr").first().hide();
+	
+			if (localStorage.getItem("venueRights"))
+			{
+				var rights = $.parseJSON(localStorage.getItem("venueRights"));
+				for (var i=0; i<rights.length; i++)
+				{
+					if (rights[i]['venueid'] == booking['venueid'])
+						$("#reservationTotalsAdjustment").parents("tr").first().show();
+				}
+			}
+			
+			if (booking['contract'].length > 0)
+				$("#reservationAgree").before("<input id='reservationAgree2' type='checkbox'> I accept the <a href='" + SanitizeAttr(booking['contract']) + "' target='_blank'>Venue Booking Contract</a><br>");
+			
+			var data = {method:'fUpdateBookingPrices'};
+			Post(data).then(function($data)
+			{			
+				if ($data['result'] != "success")
+					$("div.reservationreview").empty().append($data['result']);
+				else
+				{
+					booking = $data['data'];
+					CreateInvoice($data['data']);
+					
+					PopulateBookVenueData(booking);
+			
+					var data = {method:'fCheckBookingErrors'};
+					Post(data).then(function($data)
+					{
+						if ($data['result'] != "success")
+						{
+							$("#mainModalHeader").empty().append("There is an error with your selection");
+							$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+							$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+							$("#mainModalBody").empty().append($data['result']+ "<br><br>Please click OK to go back and create a new reservation.");
+							$("#mainModal").modal("show");
+							$("#mainModalCloseBtn").off("click").click(function(event)
+							{
+								RouteReservationRequest("book-an-event-at-" + booking['url']);
+								//window.location.href = "/reserve/book-an-event-at-" + booking['url'];
+								$("#mainModalBody").empty();$("#mainModal").modal("hide");
+							});
+						}
+					});
+				}
+			});
+			
+			$("#reservationTotals div.btn-group button").on('click',function(event)
+			{
+				event.preventDefault();
+				var perc = parseInt($(this).text().replace(/[^0-9]/g,"")) / 100;
+				var total = booking['cost'];
+				$("#reservationTotalsGratuity").val(FormatDollars(total * perc));
+			});
+		}
+		else
+		{
+			$("div.bookHeader").css({'min-height':'30px'});
+			$("div.reservationreview").empty().append("<div class='alert alert-danger'>Your saved booking data was invalid or expired, please start a new reservation</div>");
+			$("button[name^='buttonReservation']").css({"display":"none"});
+			$("h5").remove();
+		}
+	});
+	
+    $("[name=buttonReservationInfo]").off("click").click(function (event)
+	{
+		event.preventDefault();
+		RouteReservationRequest("info");
+	});
+	
+	$("#reservationTotalsGratuity").on('blur',function()
+	{
+		var v = $(this).val();
+		v = v.replace(/[^0-9.]/g,"");
+		v = FormatDollars(v);
+		$(this).val(v);
+	});
+	
+	$("#reservationTotalsAdjustment").on('blur',function()
+	{
+		var v = $(this).val();
+		v = v.replace(/[^0-9.\-]/g,"");
+		v = FormatDollars(v);
+		$(this).val(v);
+	});
+	
+	$("[name=buttonReservationReserve]").off("click").on("click", function(event)
+	{
+		event.preventDefault();
+		
+		var errors = ValidateReservationOrder();
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid information provided");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			if ($("#reservationTotalsGratuity").length > 0)
+				booking['gratuity'] = $("#reservationTotalsGratuity").val().replace(/[^0-9.]/g,"");
+			else booking['gratuity'] = 0;
+			
+			if ($("#reservationTotalsAdjustment").length > 0)
+				booking['adjustment'] = $("#reservationTotalsAdjustment").val().replace(/[^0-9.\-]/g,"");
+			else booking['adjustment'] = 0;
+			
+			var data = {
+				method:'fInsertBooking',
+				booking:booking
+			};
+			Post(data).then(function($data)
+			{
+				if ($data['result'] == "success")
+				{
+					$("#mainModalHeader").empty().append("Your reservation has been placed!");
+					$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+					$("#mainModalCloseBtn").empty().append("OK").css({"display":"none"});
+					$("#mainModalBody").empty().append("Thank you for your order, your reservation was successfully created.  You will now be taken to the payment page.  Please make sure that you pay any required deposit and full payment before it is due or your reservation may be cancelled.");
+					$("#mainModal").modal("show");
+					 
+					$("#mainModalAcceptBtn").off("click").click(function(event)
+					{
+						
+						$("#mainModalBody").empty();$("#mainModal").modal("hide");
+						$("#ReservationOrderError").empty().append("Order Placed!");
+						LoadPartial("/booking/" + $data['data'] + "/pay");
+						
+						/*
+						$("div.bookingNav li").removeClass("active").addClass("disabled");
+						$("div.bookingNav li:contains('Payment')").removeClass("disabled").addClass("active");
+						LoadPartial("/booking/" + $data['data'] + "/pay","invoiceContainer");
+						$("#mainModalBody").empty();$("#mainModal").modal("hide");
+						*/
+					});
+                }
+				else
+				{
+					$("#mainModalHeader").empty().append("Failed to place order!");
+					$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+					$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+					$("#mainModalBody").empty().append("<div class='alert alert-danger'>Failed to place order!  Please contact us if you need assistance<br><ul></ul></div>");
+					$("#mainModalBody").find("ul").first().append("<li>" + $data['result'] + "</li>");
+					$("#mainModal").modal("show");
+					 
+					$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+				}
+			});
+		}
+	});
+	
+	$("#btnApplypromoCode").off("click").click(function(event)
+	{
+		event.preventDefault();
+		var data = {
+			method:'fApplyPromoCode',
+			code:$("#reservationpromoCode").val()
+		};
+		Post(data).then(function($data)
+		{			
+			if ($data['result'] == "success")
+				RouteReservationRequest("order");
+			else
+			{
+				$("[name='promoerror']").remove();
+				$("#btnApplypromoCode").parents(".input-group").first().after("<div name='promoerror' style='color:red;display:block;margin-top:10px'>" + $data['result'] + "</div>");
+			}
+        });
+	});
+	
+	function ValidateReservationOrder()
+	{
+		var error = [];
+		
+		if ($("#reservationAgree").prop("checked") != true)
+			error.push("You must agree to the InviteBIG Terms of Service and the Venue Booking Terms if you wish to create this reservation");
+		if ($("#reservationAgree2").length > 0 && $("#reservationAgree2").prop("checked") != true)
+			error.push("You must agree to the Venue Booking Contract if you wish to create this reservation");			
+		return error;
+    }
+
+</script>

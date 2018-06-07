@@ -1,0 +1,237 @@
+<div id='reservationTitle' style='text-align:center'></div>
+<div class='panel'><div class='panel-body'>
+	<div class='reservationreview form-horizontal'>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionPayments'>Payment Details</div>
+			<div class='bookingDetailsSectionBody panel-body' id='sectionPaymentDetails'>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionMessages'>Messages<span class='badge badge-success' style='margin:0 20px;display:none'>New</span></div>
+			<div class='bookingDetailsSectionBody panel-body' id='sectionMessageDetails'>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionFiles'>Attached Documents</div>
+			<div class='bookingDetailsSectionBody panel-body' id='sectionBookingFiles'>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionEventInfo'>Event Information</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<div class='row'>
+					<div class='col-md-6'>
+						<div class='form-group'>
+							<label class='col-md-3'>Event Name</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationEventName'>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Description</label>
+							<div class='col-md-9'>
+								<textarea class='form-control' style='width:100%;height:50px' id='reservationDescription'></textarea>
+							</div>
+						</div>
+					</div>
+					<div class='col-md-6'>
+						<div class='form-group'>
+							<label class='col-md-3'>Group Size</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationGroupSize'>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Special Instructions</label>
+							<div class='col-md-9'>
+								<textarea class='form-control' style='width:100%;height:50px' id='reservationComments'></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionContactInfo'>Customer Contact Information</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<div class='row'>
+					<div class='col-md-6'>
+						<div class='form-group'>
+							<label class='col-md-3'>Contact Name</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationContactName'>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Company</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationContactCompany'>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Title</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationContactTitle'>
+							</div>
+						</div>
+					</div>
+					<div class='col-md-6'>
+						<div class='form-group'>
+							<label class='col-md-3'>Phone</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationContactPhone'>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Email</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationContactEmail'>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Website</label>
+							<div class='col-md-9'>
+								<input type='text' class='form-control' id='reservationContactWebsite'>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionQuestions'>Questionnaire</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr><th>Question</th><th>Response</th></tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionVenueInfo'>Venue Information</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<h3 id='reservationVenueName'></h3>
+				<div class='row'>
+					<div class='col-md-6'>
+						<div class='form-group'>
+							<label class='col-md-3'>Address</label>
+							<div class='col-md-9'>
+								<address id='reservationVenueAddress'></address>
+							</div>
+						</div>
+					</div>
+					<div class='col-md-6'>
+						<div class='form-group'>
+							<label class='col-md-3'>Phone</label>
+							<div class='col-md-9'>
+								<div id='reservationVenuePhone'></div>
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-md-3'>Website</label>
+							<div class='col-md-9'>
+								<a href='#' id='reservationVenueWebsite'></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionResources'>Booked Resources</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr>
+						<th>Item Name</th>
+						<th>Booking Time</th>
+						<th>Price</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionAddons'>Booked Addons</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr>
+						<th>Item Name</th>
+						<th>Delivered To</th>
+						<th>Delivered At</th>
+						<th>Quantity</th>
+						<th>Rate</th>
+						<th>Price</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionMenus'>Booked Menus</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr>
+						<th>Item Name</th>
+						<th>Delivered At</th>
+						<th>Quantity</th>
+						<th>Rate</th>
+						<th>Price</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionPersonnel'>Booked Personnel</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr>
+						<th>Personnel Name</th>
+						<th>Work-Hours</th>
+						<th>Rate</th>
+						<th>Price</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class='bookingDetailsSection panel'>
+			<div class='bookingDetailsSectionHeader' id='sectionPromos'>Promo Codes</div>
+			<div class='bookingDetailsSectionBody panel-body'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr>
+						<th>Promo Name</th>
+						<th>Description</th>
+						<th>Discount Amount</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div class='row' style='margin:5px 0'>
+			<div class='col-md-8' id='reservationPolicyList'></div>
+			<div class='col-md-4' id='reservationTotals'>
+				<table class='table table-striped table-condensed'>
+					<thead><tr><th style='width:50%'>Category</th><th>Total Price</th></tr></thead>
+					<tbody>
+						<tr><td>Booked Resources</td><td id='reservationTotalsResources'></td></tr>
+						<tr><td>Booked Add-ons</td><td id='reservationTotalsAddons'></td></tr>
+						<tr><td>Booked Menu</td><td id='reservationTotalsMenus'></td></tr>
+						<tr><td>Booked Personnel</td><td id='reservationTotalsPersonnel'></td></tr>
+						<tr><td>Setup/Cleanup Fee</td><td id='reservationTotalsCleanup'></td></tr>
+						<tr><td>Booking Fee</td><td id='reservationTotalsBookingFee'></td></tr>
+						<tr><td>Processing Fee</td><td id='reservationTotalsProcessingFee'></td></tr>
+						<tr><td>Promo Codes</td><td id='reservationTotalsPromos'></td></tr>
+						<tr><td>Taxes</td><td id='reservationTotalsTaxes'></td></tr>
+						<tr><td>Adjustments</td><td id='reservationTotalsAdjustment'></td></tr>
+						<tr><td>Gratuity</td><td id='reservationTotalsGratuity'></td></tr>
+						<tr style='font-weight:bold'><td>Grand Total</td><td id='reservationTotalsGrand'></td></tr>
+						<tr style='height:20px'><td colspan=10></td></tr>
+						<tr><td>Non-Refundable Deposit Amount</td><td id='reservationTotalsDeposit' style='background-color:#EAE090'></td></tr>
+						<tr><td>Full payment due by</td><td id='reservationTotalsDue'></td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div></div>

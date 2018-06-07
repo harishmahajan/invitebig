@@ -1,0 +1,49 @@
+<div class='alert alert-info'>We have a new calendar tool coming soon!</div>
+<div class='panel'>
+	<div class='panel-body'>
+		<div class='row'>
+			<div class='col-md-4' style='min-width:250px'>
+				<div id='overviewDatePicker'></div>
+				<button class='btn btn-lg btn-primary' id='btnNewBooking' style='margin:30px auto'>Create New Booking</button>
+			</div>
+			<div class='col-md-8'>
+				<table id='overviewUpcomingEvents' class='table table-striped table-hover table-condensed table-bookings dtable'><thead><th>Start Time</th><th>Stop Time</th><th>Event Name</th><th>Cost</th></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	
+	$("#btnNewBooking").off("click").click(function(event)
+	{
+		event.preventDefault();
+		var url = "";
+		if (localStorage.getItem("venueRights"))
+		{
+			var rights = $.parseJSON(localStorage.getItem("venueRights"));
+			for (var i=0; i<rights.length; i++)
+			{
+				if (rights[i]['venueid'] == localStorage.getItem("activeProfile"))
+					url = rights[i]['url'];
+			}
+		}
+		location.href = "/reserve/book-an-event-at-" + url;
+	});
+	
+	/* JQUERY-UI */
+	$("#overviewDatePicker").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "2013:+5",
+		onSelect: function(event){GetVenueUpcomingEvents($("#overviewDatePicker").val());},
+		dateFormat: 'MM d, yy'
+	});	
+	
+	GetVenueUpcomingEvents(null);
+	
+</script>

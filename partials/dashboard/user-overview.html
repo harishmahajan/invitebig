@@ -1,0 +1,61 @@
+<div class='panel'>
+	<div class='panel-body'>
+		<div class='row'>
+			<div class='col-lg-9'>
+				<legend id='legendPendingBookings'>Pending Bookings</legend>
+				<table class='table table-striped table-hover table-condensed table-bookings dtable' id='userBookingsTable'>
+					<thead><tr>
+						<th>Venue</th>
+						<th class='no-display-mob'>Group Size</th>
+						<th class='no-display-tab'>Start Date</th>
+						<th class='no-display-mob'>Duration</th>
+						<th>Total Amount</th>
+						<th class='no-display-mob'>Status</th>
+						<th>Action</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+				<br>
+				<legend style='margin-top:20px' id='messagesPageTitle'>New Messages</legend>
+				<table id='tableMessages' class='table table-hover table-condensed table-messages dtable'>
+					<thead><tr>
+					<th><button id='btnDeleteMessages' class='btn btn-xs btn-danger' title='Delete selected messages' style='margin-right:5px'><i class='glyphicon glyphicon-trash'></i> <small>Del</small></button></th>
+					<th>Name</th>
+					<th>Subject</th>
+					<th class='no-display-mob'>Last Update</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<div class='col-lg-3'>
+				<legend>Upcoming Events</legend>
+				<div id='overviewDatePicker' style='margin-bottom:10px'></div>
+				<table id='overviewUpcomingEvents' class='table table-striped table-hover table-condensed dtable'><thead><th>Start Time</th><th>Event Name</th></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$("#legendPendingBookings").empty().append("Pending Bookings");
+	
+	GetMyBookings(true);
+	GetMyMessages(true);
+	
+	/* JQUERY-UI */
+	$("#overviewDatePicker").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "2013:+5",
+		onSelect: function(event){GetUserUpcomingEvents($("#overviewDatePicker").val(),true);},
+		dateFormat: 'MM d, yy'
+	});
+	
+	GetUserUpcomingEvents(null,true);
+	
+	
+</script>

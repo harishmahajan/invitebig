@@ -1,0 +1,28 @@
+change all references of "devtest.invitebig.com" / 127.0.0.1:8888 to "www.invitebig.com"
+
+change 127.0.0.1:8888 / devstatic.invitebig.com to static.invitebig.com
+
+change SQL DB creds
+
+manually merge DB schema changes
+
+comment out all console.log
+
+minify JS
+
+remove non-minified JS
+
+
+
+
+
+
+set timezone UTC (dpkg-reconfigure tzdata)
+set php and mysql timezones to UTC
+turn off PHP error output
+hide server versions
+change php max_file upload to 5M in php.ini
+redirect non-www to www
+link crons
+
+sshpass nginx mysql-server php5-fpm php5-cli php5-curl php5-gd php5-imagick php5-json php5-mysql php5-mysqlnd imagemagick

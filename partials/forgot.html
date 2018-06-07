@@ -1,0 +1,48 @@
+<div class='container' style='text-align:center;'>
+	<h1 style='text-align:center; font-weight:bold;margin-top:50px'>Forgot Your Password?</h1>
+	<h4 style = 'text-align:center;color:#848484;margin-bottom:50px;'>Use this form to have a new temporary password emailed to you</h4>
+	<div id = 'signedIn' style='text-align:center'></div>
+	<div class='emailL_RDiv' style='display:block;margin-top: 20px;'>
+		<form>
+			<div class='form-group'>
+				<input class='form-control emailInput' id="forgotEmail" type='text' placeholder='Email'>
+				<span class='fa fa-envelope'></span>
+			</div>
+			<div class='form-group'>
+				<input class='form-control passwordInput' id="forgotName" type='text' placeholder='First Name'>
+				<span class='fa fa-user'></span>
+			</div>
+			<button class='form-control' id='btnForgot'>Send New Password</button>
+		</form>
+	</div>
+</div>
+<script>
+	if (localStorage.getItem("email"))
+			$("#signedIn").empty().append("<div class='alert alert-danger'>You are already logged in!</div>");
+	else{
+		$("#btnForgot").click(function(event)
+		{
+			event.preventDefault();
+			
+			var data = {
+				method: 'fForgot',
+				email: $("#forgotEmail").val(),
+				name: $("#forgotName").val()
+			};
+			Post(data).then(function($data)
+			{//console.log($data);
+				
+				if ($data['result'] == "success")
+					$("#btnForgot").css({"display":"none"}).after("<div class='alert alert-success' style='height:35px;padding-top:6px;'>New password sent!</div>");
+				else
+				{
+					$("#mainModalHeader").empty().append("There was a problem");
+					$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+					$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+					$("#mainModalBody").empty().append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+					$("#mainModal").modal("show");
+				}
+			});
+		});	
+	}
+</script>

@@ -1,0 +1,1126 @@
+<script src="/inc/js/invitebig-venuecreator.js?_=1455331660" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/all.js?_=1455331660" type="text/javascript"></script>
+
+<!--
+<script src="/inc/jQuery-File-Upload-master/js/tmpl.min.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/load-image.all.min.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/canvas-to-blob.min.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.blueimp-gallery.min.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.iframe-transport.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.fileupload.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.fileupload-process.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.fileupload-image.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.fileupload-validate.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/jquery.fileupload-ui.js" type="text/javascript"></script>
+<script src="/inc/jQuery-File-Upload-master/js/main.js" type="text/javascript"></script>
+-->
+<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
+<!--[if (gte IE 8)&(lt IE 10)]>
+<script src="/inc/jQuery-File-Upload-master/js/cors/jquery.xdr-transport.js?_=1455331660"></script>
+<![endif]-->
+<div class='panel'>
+	<input id='venueid' type='hidden' val=''/>
+	<input id='shorturl' type='hidden' val=''/>
+	<div class='panel-heading tab-bg-dark-navy-blue'>
+		<ul id='venueCreatorSteps' class='nav nav-tabs nav-justified'>
+			<li class='active'><a href='#venueCreatorInfoPane' data-toggle='tab'>Venue Information</a></li>
+			<li><a href='#venueCreatorConfigurationPane' data-toggle='tab'>Resources &amp; Addons</a></li>
+			<li><a href='#venueCreatorDetailsPane' data-toggle='tab'>Settings</a></li>
+			<li><a href='#venueCreatorFoodPane' data-toggle='tab'>Food &amp; Drink</a></li>
+			<li><a href='#venueCreatorPersonnelPane' data-toggle='tab'>Personnel</a></li>
+			<li><a href='#venueCreatorQuestionnairePane' data-toggle='tab'>Questionnaire</a></li>
+			<li><a href='#venueCreatorPromosPane' data-toggle='tab'>Promo Codes</a></li>
+			<li><a href='#venueCreatorApprovePane' data-toggle='tab'>Submit for Approval</a></li>
+		</ul>
+	</div>
+	<div class='panel-body venuecreator'>
+		<div class='tab-content'>
+			<div class='tab-pane active' id='venueCreatorInfoPane'>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="formpan" style="background:none;border:none">
+                            <div class="form-group">
+                                <label>Venue Name</label>
+                                <input type="text" class="form-control" id="venueName">
+                            </div>
+                            <div class="form-group">
+                                <label>Venue Description (HTML Capable)</label>
+                                <textarea class="form-control" id='venueDescription'></textarea>
+                            </div>
+                            <div class="form-group form-group-alt1">
+                                <label>Venue Type</label>
+                                <select id='venueType'></select>
+                            </div>
+							<div class="form-group form-group-alt2">
+                                <label title="'Public' means that this venue will show up on InviteBIG.com and any public user can create a booking request.  'Private' means that this venue will not appear on InviteBIG.com and only logged-in venue management can create booking requests.">Venue Visibility</label>
+                                <select id="venueVisibility">
+									<option value='public'>Public</option>
+									<option value='private'>Private</option>
+                                </select>
+								<div class='venueVisibilityText'>
+									'Public' means that this venue will show up on InviteBIG.com and any public user can create a booking request.
+									<br><br>
+									'Private' means that this venue will not appear on InviteBIG.com and only logged-in venue management can create booking requests.
+								</div>
+								<div class='clearfix' style='height:15px'></div>
+                            </div>
+                            <!--<div class="form-group form-group-alt2">
+                                <label>Venue Style</label>
+                                <select id="venueStyle">
+                                </select>
+                            </div> -->
+							
+							<div class="form-group form-group-alt1">
+                                <label>Currency</label>
+                                <select id='venueCurrency'>
+									<option value='USD'>United States Dollar</option>
+									<option value='AUD'>Australian Dollar</option>
+									<option value='CAD'>Canadian Dollar</option>
+									<option value='CHF'>Swiss Franc</option>
+									<option value='EUR'>Euro</option>
+									<option value='GBP'>British Pound</option>
+									<option value='HKD'>Hong Kong Dollar</option>
+									<option value='INR'>Indian Rupee</option>
+									<option value='JPY'>Japanese Yen</option>
+									<option value='MXN'>Mexican Peso</option>
+									<option value='NOK'>Norwegian Krone</option>
+									<option value='NZD'>New Zealand Dollar</option>
+									<option value='RUB'>Russian Ruble</option>
+									<!--
+									<option value='USD'>United States Dollar</option>
+									<option value='AED'>United Arab Emirates Dirham</option>
+									<option value='AFN'>Afghan Afghani</option>
+									<option value='ALL'>Albanian Lek</option>
+									<option value='AMD'>Armenian Dram</option>
+									<option value='ANG'>Netherlands Antillean Gulden</option>
+									<option value='AOA'>Angolan Kwanza</option>
+									<option value='ARS'>Argentine Peso</option>
+									<option value='AUD'>Australian Dollar</option>
+									<option value='AWG'>Aruban Florin</option>
+									<option value='AZN'>Azerbaijani Manat</option>
+									<option value='BAM'>Bosnia and Herzegovina Convertible Mark</option>
+									<option value='BBD'>Barbadian Dollar</option>
+									<option value='BDT'>Bangladeshi Taka</option>
+									<option value='BGN'>Bulgarian Lev</option>
+									<option value='BIF'>Burundian Franc</option>
+									<option value='BMD'>Bermudian Dollar</option>
+									<option value='BND'>Brunei Dollar</option>
+									<option value='BOB'>Bolivian Boliviano</option>
+									<option value='BRL'>Brazilian Real</option>
+									<option value='BSD'>Bahamian Dollar</option>
+									<option value='BWP'>Botswana Pula</option>
+									<option value='BZD'>Belize Dollar</option>
+									<option value='CAD'>Canadian Dollar</option>
+									<option value='CDF'>Congolese Franc</option>
+									<option value='CHF'>Swiss Franc</option>
+									<option value='CLP'>Chilean Peso</option>
+									<option value='CNY'>Chinese Renminbi Yuan</option>
+									<option value='COP'>Colombian Peso</option>
+									<option value='CRC'>Costa Rican Colón</option>
+									<option value='CVE'>Cape Verdean Escudo</option>
+									<option value='CZK'>Czech Koruna</option>
+									<option value='DJF'>Djiboutian Franc</option>
+									<option value='DKK'>Danish Krone</option>
+									<option value='DOP'>Dominican Peso</option>
+									<option value='DZD'>Algerian Dinar</option>
+									<option value='EGP'>Egyptian Pound</option>
+									<option value='ETB'>Ethiopian Birr</option>
+									<option value='EUR'>Euro</option>
+									<option value='FJD'>Fijian Dollar</option>
+									<option value='FKP'>Falkland Pound</option>
+									<option value='GBP'>British Pound</option>
+									<option value='GEL'>Georgian Lari</option>
+									<option value='GIP'>Gibraltar Pound</option>
+									<option value='GMD'>Gambian Dalasi</option>
+									<option value='GNF'>Guinean Franc</option>
+									<option value='GTQ'>Guatemalan Quetzal</option>
+									<option value='GYD'>Guyanese Dollar</option>
+									<option value='HKD'>Hong Kong Dollar</option>
+									<option value='HNL'>Honduran Lempira</option>
+									<option value='HRK'>Croatian Kuna</option>
+									<option value='HTG'>Haitian Gourde</option>
+									<option value='HUF'>Hungarian Forint</option>
+									<option value='IDR'>Indonesian Rupiah</option>
+									<option value='ILS'>Israeli New Sheqel</option>
+									<option value='INR'>Indian Rupee</option>
+									<option value='ISK'>Icelandic Króna</option>
+									<option value='JMD'>Jamaican Dollar</option>
+									<option value='JPY'>Japanese Yen</option>
+									<option value='KES'>Kenyan Shilling</option>
+									<option value='KGS'>Kyrgyzstani Som</option>
+									<option value='KHR'>Cambodian Riel</option>
+									<option value='KMF'>Comorian Franc</option>
+									<option value='KRW'>South Korean Won</option>
+									<option value='KYD'>Cayman Islands Dollar</option>
+									<option value='KZT'>Kazakhstani Tenge</option>
+									<option value='LAK'>Lao Kip</option>
+									<option value='LBP'>Lebanese Pound</option>
+									<option value='LKR'>Sri Lankan Rupee</option>
+									<option value='LRD'>Liberian Dollar</option>
+									<option value='LSL'>Lesotho Loti</option>
+									<option value='LTL'>Lithuanian Litas</option>
+									<option value='MAD'>Moroccan Dirham</option>
+									<option value='MDL'>Moldovan Leu</option>
+									<option value='MGA'>Malagasy Ariary</option>
+									<option value='MKD'>Macedonian Denar</option>
+									<option value='MNT'>Mongolian Tögrög</option>
+									<option value='MOP'>Macanese Pataca</option>
+									<option value='MRO'>Mauritanian Ouguiya</option>
+									<option value='MUR'>Mauritian Rupee</option>
+									<option value='MVR'>Maldivian Rufiyaa</option>
+									<option value='MWK'>Malawian Kwacha</option>
+									<option value='MXN'>Mexican Peso</option>
+									<option value='MYR'>Malaysian Ringgit</option>
+									<option value='MZN'>Mozambican Metical</option>
+									<option value='NAD'>Namibian Dollar</option>
+									<option value='NGN'>Nigerian Naira</option>
+									<option value='NIO'>Nicaraguan Córdoba</option>
+									<option value='NOK'>Norwegian Krone</option>
+									<option value='NPR'>Nepalese Rupee</option>
+									<option value='NZD'>New Zealand Dollar</option>
+									<option value='PAB'>Panamanian Balboa</option>
+									<option value='PEN'>Peruvian Nuevo Sol</option>
+									<option value='PGK'>Papua New Guinean Kina</option>
+									<option value='PHP'>Philippine Peso</option>
+									<option value='PKR'>Pakistani Rupee</option>
+									<option value='PLN'>Polish Zloty</option>
+									<option value='PYG'>Paraguayan Guaraní</option>
+									<option value='QAR'>Qatari Riyal</option>
+									<option value='RON'>Romanian Leu</option>
+									<option value='RSD'>Serbian Dinar</option>
+									<option value='RUB'>Russian Ruble</option>
+									<option value='RWF'>Rwandan Franc</option>
+									<option value='SAR'>Saudi Riyal</option>
+									<option value='SBD'>Solomon Islands Dollar</option>
+									<option value='SCR'>Seychellois Rupee</option>
+									<option value='SEK'>Swedish Krona</option>
+									<option value='SGD'>Singapore Dollar</option>
+									<option value='SHP'>Saint Helenian Pound</option>
+									<option value='SLL'>Sierra Leonean Leone</option>
+									<option value='SOS'>Somali Shilling</option>
+									<option value='SRD'>Surinamese Dollar</option>
+									<option value='STD'>São Tomé and Príncipe Dobra</option>
+									<option value='SVC'>Salvadoran Colón</option>
+									<option value='SZL'>Swazi Lilangeni</option>
+									<option value='THB'>Thai Baht</option>
+									<option value='TJS'>Tajikistani Somoni</option>
+									<option value='TOP'>Tongan Pa?anga</option>
+									<option value='TRY'>Turkish Lira</option>
+									<option value='TTD'>Trinidad and Tobago Dollar</option>
+									<option value='TWD'>New Taiwan Dollar</option>
+									<option value='TZS'>Tanzanian Shilling</option>
+									<option value='UAH'>Ukrainian Hryvnia</option>
+									<option value='UGX'>Ugandan Shilling</option>
+									<option value='UYU'>Uruguayan Peso</option>
+									<option value='UZS'>Uzbekistani Som</option>
+									<option value='VND'>Vietnamese Ð?ng</option>
+									<option value='VUV'>Vanuatu Vatu</option>
+									<option value='WST'>Samoan Tala</option>
+									<option value='XAF'>Central African Cfa Franc</option>
+									<option value='XCD'>East Caribbean Dollar</option>
+									<option value='XOF'>West African Cfa Franc</option>
+									<option value='XPF'>Cfp Franc</option>
+									<option value='YER'>Yemeni Rial</option>
+									<option value='ZAR'>South African Rand</option>
+									<option value='ZMW'>Zambian Kwacha</option>
+									-->
+                                </select>
+                            </div>
+							
+							<div class="form-group form-group-alt1">
+                                <label>Sales Tax Rate %</label>
+                                <input id='venueSalesTax' class='form-control' value='0'>
+                            </div>
+							<div class="form-group form-group-alt2">
+                                <label>Phone Number</label>
+                                <input type="text" class="form-control" id="venuePhone">
+                            </div>
+							
+							<div class="form-group">
+                                <label>Venue Address <a href='#' id='customAddress'>Show Full Address</a></label>
+                                <input type="text" class="form-control" id="venueFullAddress">
+							</div>
+                            <div class="form-group" style='display:none'>
+                                <label>Venue Address</label>
+                                <input type="text" class="form-control" id="venueAddress" data-geo="formatted_address">
+							</div>
+							<div class="form-group form-group-alt1" style='display:none'>
+                                <label>City</label>
+                                <input type="text" class="form-control" id="venueCity" data-geo="locality">
+							</div>
+							<div class="form-group form-group-alt2" style='display:none'>
+                                <label>State</label>
+                                <input type="text" class="form-control" id="venueState" data-geo="administrative_area_level_1_short">
+							</div>
+							<div class="form-group form-group-alt1" style='display:none'>
+                                <label>Postal Code</label>
+                                <input type="text" class="form-control" id="venueZip" data-geo="postal_code">
+                            </div>
+							<div class="form-group form-group-alt2" style='display:none'>
+                                <label>Country</label>
+                                <input type="text" class="form-control" id="venueCountry" data-geo="country">
+							</div>
+							<div class="form-group form-group-alt1" style='display:none'>
+                                <label>Timezone</label>
+								<input type='text' class='form-control' id='venueTimezone' placeholder='Click to set' />
+							</div>
+							<div class='clearfix'></div>
+							<div class="form-group form-group-alt3-1" style='display:none'>
+                                <label>Latitude</label>
+                                <input type="text" class="form-control" id="venueLatitude" data-geo="lat">
+                            </div>
+							<div class="form-group form-group-alt3-2" style='display:none'>
+                                <label>Longitude</label>
+                                <input type="text" class="form-control" id="venueLongitude" data-geo="lng">
+                            </div>
+							<div class="form-group form-group-alt3-3" style='display:none'>
+                                <label>Locate</label>
+                                <div style='height:46px;width:100%;padding-top:5px'>
+									<button id='btnSetGPS' class='btn btn-md btn-primary'>Find Lat/Lng</button>
+								</div>
+                            </div>
+                        </div>
+						<div class='clearfix'></div>
+                    </div>
+                    <div class="col-lg-6" style='display:flex'>
+                        <div class="formpan" style="background:none;border:none">
+							<div class="form-group">
+                                <label>Banner Announcement (optional, HTML Capable)</label>
+                                <textarea class="form-control" style='height:140px' id='venueBanner'></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Legal Business Name</label>
+                                <input type="text" class="form-control" id="venueBusinessName">
+                            </div>
+							<div class="form-group">
+                                <label>Tax Identification Number (EIN)</label>
+                                <input type="text" class="form-control" id="venueBusinessEIN">
+                            </div>
+							<div class="form-group" style='float:left;width:100%'>
+								<form class='contractupload' method='POST' enctype='multipart/form-data' action='#'>
+									<label>Booking Contract (optional)</label><br>
+									<span class="btn btn-md btn-primary fileinput-button">
+										<i class="glyphicon glyphicon-plus"></i>
+										<span>Select file...</span>
+										<!-- The file input field used as target for the file upload widget -->
+										<input id="cFileupload" type="file" name="files[]">
+									</span>
+									<div id="cFiles" class="files" style='float:left;margin-right:20px'></div>
+								</form>
+							</div>
+                            <div class="form-group">
+                                <label>Website (optional)</label>
+                                <input type="text" class="form-control" id="venueWebsite">
+                            </div>
+                            <div class="form-group">
+                                <label>Facebook Page (optional)</label>
+                                <input type="text" class="form-control" id="venueFacebook">
+                            </div>
+                            <div class="form-group">
+                                <label>Twitter (optional)</label>
+                                <input type="text" class="form-control" id="venueTwitter">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div id='venuePics' class='formpan'>
+					<form name='fileupload' class='fileupload' method='POST' enctype='multipart/form-data' action='#'>
+						<h4>Venue Pictures <small><em>(Limit 15)</em></small></h4>
+						<div class='row fileupload-buttonbar'>
+							<div class='col-md-11'>
+								<span class='btn btn-md btn-primary fileinput-button'>
+									<i class='glyphicon glyphicon-plus glyphicon-white'></i>
+									<span>Add pictures...</span>
+									<input type='file' name='files[]' multiple>
+								</span>
+							</div>
+							<div class='col-md-5 fileupload-progress fade hide'>
+								<div class='progress progress-success progress-striped active' role='progressbar' aria-valuemin='0' aria-valuemax='100'>
+									<div class='bar' style='width:0%;'></div>
+								</div>
+								<div class='progress-extended'>&nbsp;</div>
+							</div>
+						</div>
+						<div class='fileupload-loading'></div>
+						<table role='presentation' class='table table-striped' style='width:100%'><tbody class='files' data-toggle='modal-gallery' data-target='#modal-gallery'></tbody></table>
+						<div id='venuePictures' class='pictures' data-limit='15'></div>
+					</form>
+					<div id='modal-gallery' class='modal modal-gallery hide fade' data-filter=':odd' tabindex='-1'>
+						<div class='modal-header'>
+							<a class='close' data-dismiss='modal'>&times;</a>
+							<h3 class='modal-title'></h3>
+						</div>
+						<div class='modal-body'><div class='modal-image'></div></div>
+						<div class='modal-footer'>
+							<a class='btn modal-download' target='_blank'>
+								<i class='glyphicon glyphicon-download'></i>
+								<span>Download</span>
+							</a>
+							<a class='btn btn-success modal-play modal-slideshow' data-slideshow='5000'>
+								<i class='glyphicon glyphicon-play glyphicon-white'></i>
+								<span>Slideshow</span>
+							</a>
+							<a class='btn btn-info modal-prev'>
+								<i class='glyphicon glyphicon-arrow-left glyphicon-white'></i>
+								<span>Previous</span>
+							</a>
+							<a class='btn btn-primary modal-next'>
+								<span>Next</span>
+								<i class='glyphicon glyphicon-arrow-right glyphicon-white'></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='formpan tab-pane' id='venueCreatorDetailsPane'>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Food & Drink Menus </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default'>
+							<input type='radio' name='toggleFD' value='1'> On
+						</label>
+						<label class='btn btn-default active'>
+							<input type='radio' name='toggleFD' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Personnel </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default'>
+							<input type='radio' name='toggleP' value='1'> On
+						</label>
+						<label class='btn btn-default active'>
+							<input type='radio' name='toggleP' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Questionnaire </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default'>
+							<input type='radio' name='toggleQ' value='1'> On
+						</label>
+						<label class='btn btn-default active'>
+							<input type='radio' name='toggleQ' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Promo Codes </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default'>
+							<input type='radio' name='togglePC' value='1'> On
+						</label>
+						<label class='btn btn-default active'>
+							<input type='radio' name='togglePC' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Allow customers to upload and attach files to bookings? </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default active'>
+							<input type='radio' name='toggleFU' value='1'> On
+						</label>
+						<label class='btn btn-default'>
+							<input type='radio' name='toggleFU' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Allow gratuity on invoice page? </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default active'>
+							<input type='radio' name='toggleGratuity' value='1'> On
+						</label>
+						<label class='btn btn-default'>
+							<input type='radio' name='toggleGratuity' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-4'>
+						<label style='display:inline-block;margin-right:10px'>Allow entire venue to be booked? </label>
+					</div>
+					<div class='col-md-8 btn-group' data-toggle='buttons'>
+						<label class='btn btn-default active'>
+							<input type='radio' name='toggleEntireVenue' value='1'> On
+						</label>
+						<label class='btn btn-default'>
+							<input type='radio' name='toggleEntireVenue' value='0'> Off
+						</label>
+					</div>
+				</div>
+				<div class='clearfix'></div>
+				<div class='form-group row' style='width:100%'>
+					<div class='col-md-2'>
+						<label style='display:inline-block;margin-right:10px'>Features</label>
+					</div>
+					<div class='col-md-10'>
+						<select id='selVenueFeatures' multiple=true></select>					
+					</div>
+				</div>
+				<div class='clearfix'></div>
+				<div id='rowPerms' class='form-group row' style='width:100%'>
+					<div class='col-md-2'>
+						<label style='display:inline-block;margin-right:10px'>Management Rights</label>
+					</div>
+					<div id='rowMgmtUsers' class='col-md-10'>
+						<div class='newmgmtuser'>
+							<b>+</b><i class='glyphicon glyphicon-user'></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='venueconfiguration tab-pane' id='venueCreatorConfigurationPane'>
+				<div class='deposits formpan'>
+					<div class='form-group'>
+						<label>Deposit Policies</label>
+						<button name='buttonCreateDeposit' class='btn btn-xs btn-primary pull-right'>+ New Deposit Policy</button>
+					</div>
+					<div class='clearfix'></div><hr><div class='deposit_table'></div>
+				</div>
+				<div class='refunds formpan'>
+					<div class='form-group'>
+						<label>Refund Policies</label>
+						<button name='buttonCreateRefund' class='btn btn-xs btn-primary pull-right'>+ New Refund Policy</button>
+					</div>
+					<div class='clearfix'></div><hr><div class='refund_table'></div>
+				</div>
+				<div class='addons formpan'>
+					<div class='form-group'>
+						<label>Add-on services and equipment</label>
+						<button name='buttonCreateAddon' class='btn btn-xs btn-primary pull-right'>+ New Addon</button>
+						<div class='clearfix'></div><hr><div class='addon_table'></div>
+					</div>
+				</div>
+				<div class='resources formpan'>
+					<div class='form-group'>
+						<label>Space and Resources</label>
+						<div class='clearfix'></div><hr><div class='resource_table'>
+							<div id='addvenuespace' class='addnewspace creatorcategory'>
+								<button name='buttonAddResource' class='btn btn-xs btn-primary'>Create Venue Space</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='formpan tab-pane' id='venueCreatorFoodPane'>
+				<div class='form-group'>
+					<label>Food &amp; Drink Menus</label><button name='buttonAddMenu' class='btn btn-xs btn-primary pull-right'>+ New Menu</button>
+				</div>
+				<div class='clearfix'></div>
+				<div class='menu_table'></div>
+			</div>
+			<div class='formpan tab-pane' id='venueCreatorPersonnelPane'>
+				<div class='form-group'>
+					<label>Personnel</label><button name='buttonAddPersonnel' class='btn btn-xs btn-primary pull-right'>+ New Personnel</button>
+				</div>
+				<div class='clearfix'></div><div class='personnel_table'></div>
+			</div>
+			<div class='formpan tab-pane' id='venueCreatorPromosPane'>
+				<div class='form-group'>
+					<label>Promo Codes</label><button id='btnNewPromoCode' class='btn btn-xs btn-primary pull-right'>+ New Code</button>
+				</div>
+				<div class='row'>
+					<div class='col-sm-3'>
+						<select id='selectPromoCodes' class='panel panel-body' size='5'></select>
+					</div>
+					<div class='col-sm-9'>
+						<div id='divPromoCodeDetails' class='panel panel-body' style='min-height:400px;float:left;width:100%'></div>
+					</div>
+				</div>
+			</div>
+			<div class='formpan tab-pane' id='venueCreatorQuestionnairePane'>
+				<table id='tblQuestions' class='table table-hover table-striped table-condensed'>
+					<thead><tr><th>Question</th><th>Question Type</th><th>Required?</th><th><button id='btnNewQuestion' class='btn btn-xs btn-primary'>+ New Question</button></th></tr></thead>
+					<tbody>
+					</tbody>
+				</table>
+				<div id='divNewQuestionForm' style='display:none;'>
+					<legend>Create New Question</legend>
+					<div id='errQuestion' class='alert alert-danger' style='display:none;width:100%'><b>Please correct the following problems before saving this question:</b></div>
+					<input type='hidden' id='txtQuestionID'/>
+					<div class='form-group'>
+						<label class='col-sm-2 control-label' style='text-align:right'>Applies to:</label>
+						<div class='col-sm-10'>
+							<div class='row'>
+								<div class='col-xs-3'>
+									<B>Resources</B><br>
+									<select id='selQuestionResources' multiple>
+										<option value='Any'>Any</option>
+									</select>
+								</div>
+								<div class='col-xs-3'>
+									<B>Addons</B><br>
+									<select id='selQuestionAddons' multiple>
+										<option value='Any'>Any</option>
+									</select>
+								</div>
+								<div class='col-xs-3'>
+									<B>Menus</B><br>
+									<select id='selQuestionMenus' multiple>
+										<option value='Any'>Any</option>
+									</select>
+								</div>
+								<div class='col-xs-3'>
+									<B>Personnel</B><br>
+									<select id='selQuestionPersonnel' multiple>
+										<option value='Any'>Any</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class='clearfix'></div>
+					<div class='form-group' style='margin-top:10px'>
+						<div class='row'>
+							<label class='col-sm-2 control-label' style='text-align:right'>Response required?</label>
+							<div class='col-sm-10'>
+								<input type='radio' name='chkQuestionReq' value='yes'/ checked=true> Yes
+								<input type='radio' name='chkQuestionReq' value='no'/ style='margin-left:20px'> No
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<div class='row'>
+							<label class='col-sm-2 control-label' style='text-align:right'>Question Type:</label>
+							<div class='col-sm-10' style='max-width:250px'>
+								<select id='selQuestionType'>
+									<option value='text' selected='selected'>Text</option>
+									<option value='checkbox'>Checkbox</option>
+									<option value='radio'>Multiple Choice</option>
+									<option value='select'>Dropdown</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<div class='row'>
+							<label class='col-sm-2 control-label' style='text-align:right'>Question:</label>
+							<div class='col-sm-5' id='divQuestionText'>
+								<textarea id='txtQuestionText' class='form-control' style='width:100%;height:100px' placeholder='Type the question here that you want to ask...'></textarea>
+							</div>
+						</div>
+					</div>
+					<div class='form-group' id='divQuestionMulti' style='display:none'>
+						<div class='row'>
+							<label class='col-sm-2 control-label' style='text-align:right'>Answers:</label>
+							<div class='col-sm-10' style='margin-left:0'>
+								<input name='txtQuestionAnswer' class='form-control' style='width:200px;display:inline-block' placeholder='Specify an option...'/> <a href='#' name='aQuestionAnswerDel'>Delete Answer</a><br>
+								<a href='#' id='aQuestionAnswerAdd'>Add new answer</a>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<div class='col-sm-2' style='text-align:right'>
+							<button id='btnSaveQuestion' class='btn btn-md btn-primary'>Save Question</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='formpan tab-pane' id='venueCreatorApprovePane'>
+			In order for your venue to be made active and available for booking you will need to submit your venue for approval.  Our team will review your venue configuration to make sure that everything looks correct prior to making it active.  The approval process may take a few business days, and if we have any questions we will contact you.<br><br>Save your configuration before submitting for approval!
+				<div class='form-group' style='margin-top:30px'>
+					<label class='control-label'></label>
+					<button type='submit' class='btn btn-primary btn-default' name='venueApprove'>Request Review</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class='form-group' style='margin-top:30px'>
+		<label class='control-label'></label>
+		<button type='submit' class='btn btn-success btn-lg' id='venueSubmit'>Save Configuration</button>
+	</div>
+</div>
+		
+<script id="template-upload" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td>
+            <span class="preview"></span>
+        </td>
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="error text-danger"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+        </td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+                <button class="btn btn-primary start" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>Upload</span>
+                </button>
+            {% } %}
+            {% if (!i) { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-download fade">
+        <td>
+            <span class="preview">
+                {% if (file.thumbnailUrl) { %}
+                    <a href="/assets/content{%=file.url%}" title="{%=file.name%}" download="/assets/content{%=file.name%}" data-gallery><img src="/assets/content{%=file.thumbnailUrl%}"></a>
+                {% } %}
+            </span>
+        </td>
+        <td>
+            <p class="name">
+                {% if (file.url) { %}
+                    <a href="/assets/content{%=file.url%}" title="{%=file.name%}" download="/assets/content{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                {% } else { %}
+                    <span>{%=file.name%}</span>
+                {% } %}
+            </p>
+            {% if (file.error) { %}
+                <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+            {% } %}
+        </td>
+        <td>
+            <span class="size">{%=o.formatFileSize(file.size)%}</span>
+        </td>
+        <td>
+            <button class="btn btn-warning cancel">
+                <i class="glyphicon glyphicon-ban-circle"></i>
+                <span>Cancel</span>
+            </button>
+        </td>
+    </tr>
+{% } %}
+</script>
+
+<script>	
+
+	$("#customAddress").on('click',function(event){
+		event.preventDefault();
+		$("#venueFullAddress").parent("div").hide();
+		$("#venueFullAddress").parent("div").nextAll("*").show();
+		$("#venueTimezone").parent("div").show();
+	});
+	
+	function initGeo()
+	{
+		$("#venueFullAddress").geocomplete({details:"#venueCreatorInfoPane",detailsAttribute:"data-geo"})
+			.on("geocode:result",function(event,result){
+				$.ajax({
+					type: "GET",
+					url: "https://maps.googleapis.com/maps/api/timezone/json?location=" + 
+						result.geometry.location.lat() + "," + result.geometry.location.lng() + 
+						"&timestamp=" + Math.floor(Date.now()/1000) + "&key=AIzaSyCHnuAHZDSScuZppB3-mKyau99J1I2wSAI"
+				})
+				.done(function( data ){
+					try {
+						if (data.timeZoneId)
+							$("#venueTimezone").val(data.timeZoneId);
+							
+						console.log("timezone val()",data.timeZoneId);
+					}
+					catch (e) {};
+				});
+			});		
+	};
+	
+	function initMap()
+	{
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = '/inc/js/geocomplete.js?_=1455331660&callback=t';
+		document.body.appendChild(script);
+		script.onload = function(){ initGeo(); };
+	};
+	
+	if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.Map === 'undefined')
+	{
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBq2fhRTY_G4yiqLO6B8MTChODgpQOg7Zo&callback=initMap';
+		document.body.appendChild(script);
+	}
+	else if (typeof $.fn.geocomplete === "undefined") initMap();
+	else initGeo();
+	
+	if (!localStorage.getItem("email"))
+		$("#venueid").parent().empty().append("<br><br><div class='container'><div class='alert alert-danger text-center'>You must be logged in to view this page</div></div>");
+		
+	$(function() 
+	{		
+		/*
+		$("#btnSetGPS").off('click').on('click',function(event)
+		{
+			event.preventDefault();
+			
+			if (window.location.href.indexOf("/create-venue") > 0)
+				return;
+				
+			var address = $("#venueAddress").val()+", "+$("#venueCity").val()+", "+$("#venueState").val()+", "+$("#venueZip").val()+", "+$("#venueCountry").val();
+			var geocoder = new google.maps.Geocoder();
+			geocoder.geocode({'address': address}, function(results, status)
+			{
+				if (status === google.maps.GeocoderStatus.OK && results.length > 0)
+				{
+					$("#venueLatitude").val(results[0].geometry.location.lat());
+					$("#venueLongitude").val(results[0].geometry.location.lng());
+				}
+				else
+				{
+					$("#mainModalHeader").empty().append("Could not find GPS coordinates");
+					$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+					$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+					$("#mainModalBody").empty().append("<br>Google Maps could not find GPS coordinates for the address you provided.<br>");
+					$("#mainModal").modal("show");
+					$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+				}
+			});
+
+		});
+		*/
+		
+		RebindContractUpload();
+		
+		$("[name=fileupload]").each(function()
+		{
+			if (!$(this).attr("data-init"))
+			{
+				$(this).fileupload(
+				{
+					url: "/inc/jQuery-File-Upload-master/server/php/index.php",
+					sequentialUploads: false,
+					//formData: {script: true},
+					limitMultiFileUploads: 4,
+					acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+					maxFileSize: 8388608
+				});
+				
+				$(this).on('fileuploaddone', function (e, data) 
+				{console.log("fileuploadaddone data",data);
+					if ($(this).find("div.pictures").find("div.pic").length < $(this).find("div.pictures").first().attr("data-limit") &&
+						data && data.result && data.result.files && data.result.files.length > 0)
+						InsertPicture($(this).find("div.pictures").first(),data.result.files[0].url);
+				});
+			}
+			$(this).attr("data-init","1");
+		});
+		
+		BindCreatorControls();
+		
+		// PopulateVenueStyles($("#venueStyle"));
+		var d1 = PopulateVenueTypes($("#venueType"));
+		var d2 = PopulateVenueFeatures($("#selVenueFeatures"));
+		$("#venueVisibility").SumoSelect();
+		$("#venueCurrency").SumoSelect();
+		ReBindCreatorControls();
+		RebindQuestionnaireControls();
+		
+		var deposit = {
+			id: null,
+			name: "No deposit, full payment required",
+			dollar: 0.01,
+			perc: 0,
+			full: 365,
+			amount: 0,
+			threshold: 0
+		};
+		
+		InsertDeposit(deposit['name'], deposit);
+		
+		var refund = {
+			id: null,
+			name: "Full refund always, excluding deposit",
+			policy: JSON.stringify($.parseJSON('[{"days":"365","fee":"0"}]'))
+		};
+		
+		InsertRefund(refund['name'], refund);
+		
+		if (window.location.href.indexOf("create-venue") < 0)
+		{
+			if (localStorage.getItem("activeProfile") && localStorage.getItem("activeProfile") == "me")
+				$("div.venuecreator").prepend("<div class='alert alert-danger'>You must open a venue dashboard in order to view its configuration profile</div>");
+			else if (localStorage.getItem("activeProfile"))
+				$.when(d1,d2).then(function(){LoadVenueConfig(localStorage.getItem("activeProfile"));});
+		}
+		else
+		{
+			//$("#venueCreatorNewHeader").show();
+			localStorage.setItem("tempVenueConfig",".");
+			$("#venuecreator .panel-heading").first().hide();
+			$(".panel-body.venuecreator").removeClass("panel-body");
+		}
+	});
+		
+	function BindCreatorControls()
+	{
+		$("[name=helpAddResource]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("HELP ME!");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpAddMenu]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("HELP ME!");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpAddPersonnel]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("HELP ME!");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpAddDeposit]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("HELP ME! This only rubberstamps bookings with requirements, must be changed per-booking after the booking has been made, changing this will not change existing bookings.  When multiple resources are booked with different policies we will apply the most strict policy to the entire booking.");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpAddRefund]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("HELP ME! This only rubberstamps bookings with requirements, must be changed per-booking after the booking has been made, changing this will not change existing bookings.  When multiple resources are booked with different policies we will apply the most strict policy to the entire booking.");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpAddAddon]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("HELP ME! Cannot change existing addons, must create new ones and delete old ones");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpNewResource]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("You cannot edit an existing resource if there are reservations on the books that use that resource.");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("[name=helpNewMenu]").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Help Me!");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"none"});
+			$("#mainModalBody").empty().append("You cannot edit an existing menu item, you must create a new one instead and delete the old one.");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModalBody").empty(); $("#mainModal").modal("hide"); });
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("#btnNewPromoCode").off("click").click(function(event)
+		{
+			event.preventDefault();
+			$("#selectPromoCodes option:selected").prop("selected",false);
+			CreatePromoDetailsPage();
+		});
+		
+		$("#selectPromoCodes").off("change").on("change",function(event)
+		{
+			event.preventDefault();
+			if ($("#selectPromoCodes option:selected").length > 0)
+			{
+				CreatePromoDetailsPage().then(function(){
+					PopulatePromoData($("#selectPromoCodes option:selected"));
+				});
+			}
+		});
+		
+		$("#btnNewQuestion").off("click").click(function(event)
+		{
+			$("#errQuestion").hide();
+			$("#divNewQuestionForm legend").empty().append("Create New Question");
+			$("#divNewQuestionForm").css({'display':'block'});
+			$("#txtQuestionID").val("");
+			$("input[name='txtQuestionAnswer']:not(:first)").next("a").remove();
+			$("input[name='txtQuestionAnswer']:not(:first)").next("br").remove();
+			$("input[name='txtQuestionAnswer']:not(:first)").remove();
+			$("input[name='txtQuestionAnswer']").val("");
+			$("#txtQuestionText").val("");
+			$("#divNewQuestionForm input[name='chkQuestionReq']").prop("checked",false);
+			$("#divNewQuestionForm input[name='chkQuestionReq']:first").prop("checked",true);
+			
+			PopulateQuestionResourceList();
+		});
+		
+		$("#selQuestionType").off("change").change(function(event)
+		{
+			$("#divQuestionMulti").hide();
+			
+			switch ($(this).find("option:selected").attr("value"))
+			{
+				case "text":
+				case "checkbox":
+					break;
+				case "select":
+				case "radio":
+					$("#divQuestionMulti").css({"display":"block"});
+					break;
+			}
+		});
+		
+		$("#btnSaveQuestion").off("click").click(function(event)
+		{
+			if (ValidateQuestion())
+			{
+				InsertQuestion();
+				$("#divNewQuestionForm").hide();
+			}
+		});
+		
+		$("#buttonDelContact").off("click").click(function(event)
+		{	
+			$("#mainModalHeader").empty().append("Delete?");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+			$("#mainModalBody").empty().append("Are you sure you want to delete \"" + $("#venueContacts option:selected").data("name") + "\"?");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModal").modal("hide"); }).click(function(event) 
+			{
+				$("#venueContacts option:selected").remove();
+				$("#mainModalBody").empty();
+			});
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		});
+		
+		$("#buttonNewContact").off("click").click(function(event)
+		{
+			$("#mainModalHeader").empty().append("Add a contact");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+			$("#mainModalBody").empty();
+			LoadPartial("/venue-creator/contact.html","mainModalBody").done(function()
+			{
+				$("#mainModal").modal("show");
+				 
+				$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModal").modal("hide"); }).click(function(event) 
+				{
+					InsertContact($("#newContactName").val());
+					$("#mainModalBody").empty();
+				});
+				$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+			});
+		});
+		
+		$("#buttonEditContact").off("click").click(function(event)
+		{	
+			var $opt = $("#venueContacts option:selected");
+			$("#mainModalHeader").empty().append("Edit \"" + $opt.data("name") + "\"");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+			$("#mainModalBody").empty();
+			LoadPartial("/venue-creator/contact.html","mainModalBody").done(function()
+			{
+				PopulateContactData($opt);
+				$("#mainModal").modal("show");
+				 
+				$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModal").modal("hide"); }).click(function(event) 
+				{
+					EncodeContactData($opt);
+					$("#mainModalBody").empty();
+				});
+				$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+			});
+		});
+		
+		$("#venueTimezone").off("click").click(function(event)
+		{
+			event.preventDefault();
+			$("#mainModalHeader").empty().append("Choose your Timezone");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<iframe id='iframeTimezone' src='/inc/timezonepicker-master/index.php' style='width:100%;height:350px;border:none;scrolling:no'></iframe>");
+			$("#mainModal").modal("show");
+			 
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModal").modal("hide"); }).click(function(event) 
+			{ 
+				$("#venueTimezone").val($("#iframeTimezone").contents().find('#edit-date-default-timezone').val());
+			});
+		});
+		
+		$("div.newmgmtuser").off("click").click(function(event)
+		{
+			event.preventDefault();
+			$(this).before("<div class='mgmtuser'>\
+								<b>Email:</b><input type='text' class='txtRightsEmail' placeholder='User&#39;s email address' value=''/>\
+								<button class='btn btn-xs pull-right btnMgmtRightsDelete'><i class='glyphicon glyphicon-trash'></i></button><br>\
+								<div class='clearfix'></div>\
+								<div class='row'>\
+									<div class='col-xs-6'>\
+										<input type='checkbox' name='chkRightsViewBooks'/> View Books<br>\
+										<input type='checkbox' name='chkRightsManageBooks'/> Manage Books\
+										<input type='checkbox' name='chkRightsEmails'/> Receive Emails\
+									</div>\
+									<div class='col-xs-6'>\
+										<input type='checkbox' name='chkRightsViewFinancials'/> View Financials<br>\
+										<input type='checkbox' name='chkRightsManageVenue'/> Manage Venue \
+									</div>\
+								</div>\
+							</div>");
+			ReBindCreatorControls();
+		});
+	}
+</script>

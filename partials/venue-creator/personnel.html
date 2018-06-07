@@ -1,0 +1,77 @@
+<div id='newPersonnelError' class='alert alert-danger' style='display:none'></div>
+<div class='clearfix'></div>
+<div id='formAddNewPersonnel' class='form-horizontal' action='#'>
+	<input type='hidden' id='newPersonnelID' value=''>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Personnel Title</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newPersonnelName' placeholder='Name of the personnel'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Description</label>
+		<div class='col-md-9'>
+			<textarea class='form-control' style='width:100%;height:200px' id='newPersonnelDescription' placeholder='Describe this personnel item'></textarea>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Hourly Rate</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newPersonnelPrice'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Minimum Time <small><em>(hours)</em></small></label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newPersonnelMin' value='0'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Maximum Time <small><em>(hours)</em></small></label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newPersonnelMax' value='100'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Deposit Policy</label>
+		<div class='col-md-9'>
+			<select id='selectDepositList'></select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Refund Policy</label>
+		<div class='col-md-9'>
+			<select id='selectRefundList'></select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Require 1 per this many guests</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newPersonnelReq' value='0'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label' style='text-align:right'>Available for resources</label>
+		<div class='col-md-9'>
+			<div style='border:1px solid #CCC;border-radius:5px;line-height:30px;box-shadow: inset 0 1px 1px rgba(0,0,0,.075);'>
+				<select id='selPersonnelResources' multiple></select>
+			</div>
+		</div>
+	</div>
+	<div class='form-group' id='fgHours'>
+		<label class='col-md-3 control-label'>Availability</label>
+		<div class='col-md-9'>
+			<table class='timeslot-widget dtable'>
+				<thead><tr><th>Days of the week</th><th>Start Time</th><th>End Time</th><th></th></tr></thead>
+				<tbody></tbody>
+				<tfoot><tr><td colspan=10><button class='btn btn-xs btn-primary tsAdd'>Add New Timeslot</button><button class='btn btn-xs btn-default ts24x7'>Add 24x7 Timeslot</button></td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	
+	$("table.timeslot-widget").each(function(){$(this).tsWidget();});
+	
+</script>

@@ -1,0 +1,123 @@
+<!-- invitebig.com/venues/city/type/name -->
+
+<div class='searchMap no-display-mob'>
+	<div id='searchMap'></div>
+</div>
+
+<h1 class='venueSearchH1'></h1>
+<div id='divSearch' class='text-center' style='display:block'>
+	<div class='bookfilter text-center' style='padding:20px;display:inline-block'>
+		<form class='form-inline' style='margin:0' action='#'>
+			I am looking for 
+			<select id='bookFilterType' multiple></select>
+			 for 
+			<select id='bookFilterPeople'>
+				<option value='0'>Group Size</option>
+				<option value='2'>2+ people</option>
+				<option value='3'>3+ people</option>
+				<option value='4'>4+ people</option>
+				<option value='5'>5+ people</option>
+				<option value='6'>6+ people</option>
+				<option value='7'>7+ people</option>
+				<option value='8'>8+ people</option>
+				<option value='9'>9+ people</option>
+				<option value='10'>10+ people</option>
+				<option value='12'>12+ people</option>
+				<option value='14'>14+ people</option>
+				<option value='16'>16+ people</option>
+				<option value='18'>18+ people</option>
+				<option value='20'>20+ people</option>
+				<option value='30'>30+ people</option>
+				<option value='40'>40+ people</option>
+				<option value='50'>50+ people</option>
+				<option value='60'>60+ people</option>
+				<option value='70'>70+ people</option>
+				<option value='80'>80+ people</option>
+				<option value='90'>90+ people</option>
+				<option value='100'>100+ people</option>
+				<option value='200'>200+ people</option>
+				<option value='300'>300+ people</option>
+				<option value='400'>400+ people</option>
+				<option value='500'>500+ people</option>
+			</select>
+			<button id='bookFind' class='btn btn-primary' style='margin-left:5px'>Find</button>
+		</form>
+	</div>
+</div>
+<div class='container' id='venueSearchResults'>
+</div>
+
+<script src="/inc/js/invitebig-misc.js?_=1455331660" type="text/javascript"></script>
+
+<script>
+
+	$("h1.venueSearchH1").empty().append($("title").first().text().replace("| InviteBIG","").replace(/\|/g,"-"));
+		
+	$("#bookFilterPeople").SumoSelect();
+	$("#bookFilterType").SumoSelect({okCancelInMulti: true, selectAll: true});
+	
+	$("#bookFind").click(function(event)
+	{
+		event.preventDefault();
+		
+		var filter = "types=" + JSON.stringify($("#bookFilterType").val()) + "&size=" + $("#bookFilterPeople option:selected").val();
+		var url = window.location.pathname;
+		if (url.indexOf("/type/") > 0)
+			url = url.substring(0,url.indexOf("/type/"));
+		if (url.indexOf("?") > 0)
+			url = url.split("?")[0];
+		url += "?" + filter;
+		
+		if (typeof window.history.pushState !== "undefined")
+			history.pushState(true, null, url);
+		else window.location.href = url;
+		
+		filter = {
+			types: $("#bookFilterType").val(),
+			size: $("#bookFilterPeople option:selected").val()
+		};
+		
+		var u = url.split('?')[0];
+		if (u.split('/').length >= 2)
+			filter.city = u.split('/')[2];
+		if (u.split('/').length >= 3)
+			filter.venueType = u.split('/')[3];
+		
+		SearchVenues(filter);
+	});		
+	
+	var map;
+	var markers = [];
+	
+	function initializeMap() 
+	{
+        var mapOptions = {
+			center: { lat: 47.61, lng: -122.33},
+			zoom: 10,
+			scrollwheel: false
+        };
+        map = new google.maps.Map(document.getElementById('searchMap'), mapOptions);
+		
+		window.addEventListener('touchstart', function setHasTouch ()
+		{
+			map.setOptions({draggable:false}); 
+			// Remove event listener once fired, otherwise it'll kill scrolling performance
+			window.removeEventListener('touchstart', setHasTouch);
+		});
+    }
+	
+	$(function()
+	{		
+		if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.Map === 'undefined')
+		{
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBq2fhRTY_G4yiqLO6B8MTChODgpQOg7Zo&callback=initializeMap';
+			document.body.appendChild(script);
+		}
+		else initializeMap();
+		
+		LoadSearchVenues();
+	});
+
+</script>		

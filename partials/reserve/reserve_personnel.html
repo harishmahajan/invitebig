@@ -1,0 +1,181 @@
+<div class='container'>
+	<div class='panel'>
+		<!-- <div id='reservationTitle' style='text-align:center'></div> -->
+		<div class='reservationpersonnel panel panel-body row' style='margin:0'>
+			<legend>Select Personnel For Your Event</legend>
+			<table class='table table-striped table-condensed ptable'><thead><tr><th>Personnel Type</th><th>Price</th><th style='white-space: nowrap;'>Total Hours</th></tr></thead><tbody></tbody></table>
+		</div>
+		<div class='reservationSubTotal text-center'>Subtotal: </div>
+		<div class='clearfix'></div>
+		<button class='btn btn-lg btn-primary pull-left' style='margin:10px auto auto 5%;width:100px' name='buttonReservationBack' >Back</button>
+		<button class='btn btn-lg btn-primary pull-right' style='margin:10px 5% auto auto;width:100px' name='buttonReservationInfo' >Next</button>
+		<div class='clearfix'></div>
+	</div>
+</div>
+<script>
+   
+    if ( $("div").hasClass( "avail_selected" ) ) {
+		 //alert("1"); 
+    }
+ 
+	var booking = null;
+	var data = {method:'fGetSessionBooking'};
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success")
+			booking = $data['data'];
+		
+		if (booking == null || booking['resources'].length < 1)
+		{
+			$("div.bookHeader").css({'min-height':'30px'});
+			$("div.reservationpersonnel").append("<div class='alert alert-danger'>Your saved booking data was invalid, or expired, please start a new reservation</div>");
+			$("button[name^='buttonReservation']").css({"display":"none"});
+			$("#reservationSubTotal").css({"display":"none"});
+			$("h5").remove();
+		}
+		else
+		{
+			InsertBookingNav(booking);
+			PopulateBookVenueData(booking);
+			$("#reservationTitle").empty().append("<h3>Reservation #" + booking['id'] + " for " + booking['name'] + "</h3>");
+			
+			var start = booking['resources'][0]['start'];
+			var stop = booking['resources'][0]['stop'];
+				
+			for (var i = 0; i < booking['resources'].length; i++)
+			{
+				if (booking['resources'][i]['start'] < start)
+					start = booking['resources'][i]['start'];
+				if (booking['resources'][i]['stop'] > stop)
+					stop = booking['resources'][i]['stop'];
+			}
+			var arr = {
+				venueid: booking['venueid'],
+				start: start,
+				stop: stop
+			};
+			console.log("arr",arr);
+			var data = {
+				method:'fGetReservationPersonnel',
+				venueid: booking['venueid'],
+				start: start,
+				stop: stop
+			};
+			Post(data).then(function($data)
+			{
+				if ($data['result'] == "success")
+				{
+					var personnel = $data['data'];
+					
+					if (personnel.length < 1)
+					{
+						$("div.reservationpersonnel table tbody").append("<tr><td colspan=10 style='text-align:center'>No staff are available for hire during the time of your reservation</td></tr>");
+						/*
+						if (document.referrer.indexOf("/info") > 0)
+							$("button[name='buttonReservationBack']").trigger("click");
+						else $("button[name='buttonReservationInfo']").trigger("click");
+						*/
+					}
+						
+					AddReservationPersonnel(personnel, booking);
+				}
+			});
+		}
+	});
+		
+    $("[name=buttonReservationBack]").off("click").click(function (event)
+	{
+		event.preventDefault();
+		var errors = ValidatePersonnelQuantities();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid personnel hours specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			UpdateBookingArrayPersonnel(booking);
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{				
+				var page = "food";
+				if (booking['functionality']['menus'] != 1)
+				{
+					page = "addons";
+                }
+				RouteReservationRequest(page);
+			});
+		}
+	});
+	
+	$("[name=buttonReservationInfo]").on("click", function(event)
+	{
+		event.preventDefault();
+		var errors = ValidatePersonnelQuantities();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid personnel hours specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			UpdateBookingArrayPersonnel(booking);
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{				
+				RouteReservationRequest("info");
+			});
+		}
+	});
+	
+	function ValidatePersonnelQuantities()
+	{
+		var errors = [];
+			
+		$(".reservationperson").each(function()
+		{
+			var min = parseInt($(this).attr("data-min"));
+			var max = parseInt($(this).attr("data-max"));
+			var req = parseInt($(this).attr("data-req"));
+			
+			$(this).find("input.reservationPersonnelQuantity").css({"background-color":"#fff"});
+			
+			var quantity = parseInt($(this).find("input.reservationPersonnelQuantity").first().val().replace(/[^0-9.]/g,""));
+			if (!quantity)
+				quantity = 0;
+				
+			if (quantity != 0 && req <= 0 && (quantity < min || quantity > max))
+			{
+				errors.push("You must specify a number of hours between " + min + " and " + max + " for '" + $(this).find("h5").first().text() + "'");
+				$(this).find("input.reservationPersonnelQuantity").css({"background-color":"#f2dede"});
+			}
+			else if (quantity != 0 && req > 0 && quantity < min)
+			{
+				errors.push("You must specify at least " + min + " hours for '" + $(this).find("h5").first().text() + "'");
+				$(this).find("input.reservationPersonnelQuantity").css({"background-color":"#f2dede"});
+			}
+		});
+		
+		return errors;
+    }
+</script>

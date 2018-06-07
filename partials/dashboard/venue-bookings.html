@@ -1,0 +1,68 @@
+<div class='panel'>
+	<div class='panel-body'>
+		<legend>Bookings Pending Approval</legend>
+		<table class='table table-striped table-hover table-condensed table-bookings dtable' id='venueBookingsPendingTable'>
+			<thead><tr>
+				<th>Organizer</th>
+				<th class='no-display-mob'># People</th>
+				<th class='no-display-tab'>Start Date</th>
+				<th class='no-display-tab'>Stop Date</th>
+				<th class='no-display-mob'>Duration</th>
+				<th>Total</th>
+				<th>Status</th>
+				<th>Action</th>
+			</tr></thead>
+			<tbody></tbody>
+		</table>
+		<br>
+		<legend>Bookings Pending Payment</legend>
+		<table class='table table-striped table-hover table-condensed table-bookings dtable' id='venueBookingsPendingPaymentTable'>
+			<thead><tr>
+				<th>Organizer</th>
+				<th class='no-display-mob'># People</th>
+				<th class='no-display-tab'>Start Date</th>
+				<th class='no-display-tab'>Stop Date</th>
+				<th class='no-display-mob'>Duration</th>
+				<th>Total</th>
+				<th>Status</th>
+				<th>Action</th>
+			</tr></thead>
+			<tbody></tbody>
+		</table>
+		<br>
+		<legend>Confirmed Bookings</legend>
+		<table class='table table-striped table-hover table-condensed table-bookings dtable' id='venueBookingsConfirmedTable'>
+			<thead><tr>
+				<th>Organizer</th>
+				<th class='no-display-mob'># Ppl</th>
+				<th class='no-display-tab'>Start Date</th>
+				<th class='no-display-tab'>Stop Date</th>
+				<th class='no-display-mob'>Duration</th>
+				<th>Total</th>
+				<th class='no-display-mob'>Status</th>
+				<th>Action</th>
+			</tr></thead>
+			<tbody></tbody>
+		</table>
+		<br>
+		<legend>Completed Bookings</legend>
+		<table class='table table-striped table-hover table-condensed table-bookings dtable' id='venueBookingsCompletedTable'>
+			<thead><tr>
+				<th>Organizer</th>
+				<th class='no-display-mob'># Ppl</th>
+				<th class='no-display-tab'>Start Date</th>
+				<th class='no-display-tab'>Stop Date</th>
+				<th class='no-display-mob'>Duration</th>
+				<th>Total</th>
+				<th>Status</th>
+			</tr></thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+<script>
+
+	GetVenueBookings(localStorage.getItem("activeProfile"));
+
+	
+</script>

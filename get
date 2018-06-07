@@ -1,0 +1,58 @@
+######## rpl $$$###########
+#!/bin/sh
+# folder oldpat newpat
+grep -rl "$2" $1 | grep ".css\|.js\|.php\|.html\|cron\/" |
+ while read filename
+ do
+ (
+  echo $filename
+  sed -i 's/'"$2"'/'"$3"'/g;' $filename
+ )
+ done
+######## get ############
+ 
+#!/bin/bash
+#rm -rf invitebig
+#git clone https://triwebb1@bitbucket.org/triwebb1/invitebig2.git
+cd /var/www/invitebig
+git reset --hard HEAD
+git pull
+cd /var/www
+chown www-data.www-data invitebig -R
+chmod a-rw,o-x,u+rw,g+rw invitebig -R
+chmod g-rw invitebig/.git -R
+chmod g-rw invitebig/cron -R
+chmod g-rw invitebig/certs -R
+chmod g-rw invitebig/php -R
+chmod g-rw invitebig/.htaccess
+chmod g-rw invitebig/channel.php
+chmod g-rw invitebig/db.sql
+chmod g-rw invitebig/db.txt
+chmod u+x invitebig/cron -R
+./rpl /var/www/invitebig "Bugsnag\.releaseStage = \"development\";" "Bugsnag\.releaseStage = \"production\";"
+./rpl /var/www/invitebig "https:\/\/d\.invitebig\.com:8888\/assets\/" "https:\/\/teststatic\.invitebig\.com\/assets\/"
+./rpl /var/www/invitebig "https:\/\/d\.invitebig\.com:8888" "https:\/\/www\.invitebig\.com"
+./rpl /var/www/invitebig "231999503608351" "FACEBOOK PROD API"
+./rpl /var/www/invitebig "pk_test_AhqZSHg2Xodi2n3vIDf3cY0s" "STRIPE LIVE PK"
+./rpl /var/www/invitebig "sk_test_zTG8rG4XzQXxTberO7syRaL4" "STRIPE LIVE SK"
+./rpl /var/www/invitebig "InviteBIG - TEST" "InviteBIG - Live"
+./rpl /var/www/invitebig "dbuser = \"root\"" "dbuser = \"PROD SQL USER\""
+./rpl /var/www/invitebig "dbpass = \"mysql\"" "dbpass = \"PROD SQL PASSWD\""
+./rpl /var/www/invitebig "INVITEBIGBACKUPPASSWORD" "INVITEBIGBACKUPPASSWORD"
+
+time=$(date +%s)
+./rpl /var/www/invitebig "?_=TIMESTAMP" "?_=$time"
+
+cat /var/www/invitebig/inc/js/invitebig.js | uglifyjs -o /var/www/invitebig/inc/js/invitebig.js
+cat /var/www/invitebig/inc/js/invitebig-venuecreator.js | uglifyjs -o /var/www/invitebig/inc/js/invitebig-venuecreator.js
+cat /var/www/invitebig/inc/js/invitebig-dashboard.js | uglifyjs -o /var/www/invitebig/inc/js/invitebig-dashboard.js
+cat /var/www/invitebig/inc/js/invitebig-booking.js | uglifyjs -o /var/www/invitebig/inc/js/invitebig-booking.js
+cat /var/www/invitebig/inc/js/invitebig-reserve.js | uglifyjs -o /var/www/invitebig/inc/js/invitebig-reserve.js
+cat /var/www/invitebig/inc/js/invitebig-misc.js | uglifyjs -o /var/www/invitebig/inc/js/invitebig-misc.js
+
+curl http://127.0.0.1/action.php?fCleanupPictures=1
+curl http://127.0.0.1/sitemap_gen.php
+
+echo
+echo TIMESTAMP=$time
+echo

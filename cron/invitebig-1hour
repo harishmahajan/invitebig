@@ -1,0 +1,17 @@
+#!/bin/bash
+
+find /home/backup/invitebig-hourly-*.tgz -mmin +1440 -exec rm {} \;
+
+rm -r /home/backup/temp
+mkdir /home/backup/temp
+mysqldump -u ibuser -pibpassw! invitebig > /home/backup/temp/invitebig.sql
+cp -r /etc /home/backup/temp/
+cp -r /var/www /home/backup/temp
+
+NAME=invitebig-hourly-$(date +"%m-%d-%y_%T").tgz
+tar czf /home/backup/$NAME /home/backup/temp
+rm -r /home/backup/temp
+chown root.root /home/backup -R
+chmod a-rwx /home/backup -R
+
+sshpass -p 'ASIudsfen3q89ec398ec39ncwe9og30q' scp /home/backup/$NAME invitebig@d.invitebig.com:/home/invitebig/

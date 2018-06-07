@@ -1,0 +1,419 @@
+<div class='container'>
+	<div class='panel'>
+		<div class='alert alert-info alertReservationInfo'>If you have an InviteBIG account, <a href='/login?callback=/reserve/info' id='aLoginNow'>login now</a> to use your saved information</div>
+		<div class='reservationquestions2 panel panel-body'>
+			<legend>Customer Contact Information</legend>
+			<div class='row'>
+				<div class='col-md-6'>
+					<div class='form-group row'>
+						<label class='col-md-3 control-label'>Contact Name*</label>
+						<div class='col-md-9'>
+							<input type='text' class='form-control' id='reservationContactName'>
+						</div>
+					</div>
+					<div class='form-group row'>
+						<label class='col-md-3 control-label'>Company</label>
+						<div class='col-md-9'>
+							<input type='text' class='form-control' id='reservationContactCompany'>
+						</div>
+					</div>
+					<div class='form-group row'>
+						<label class='col-md-3 control-label'>Title</label>
+						<div class='col-md-9'>
+							<input type='text' class='form-control' id='reservationContactTitle'>
+						</div>
+					</div>
+				</div>
+				<div class='col-md-6'>
+					<div class='form-group row'>
+						<label class='col-md-3 control-label'>Phone*</label>
+						<div class='col-md-9'>
+							<input type='text' class='form-control' id='reservationContactPhone'>
+						</div>
+					</div>
+					<div class='form-group row'>
+						<label class='col-md-3 control-label'>Email*</label>
+						<div class='col-md-9'>
+							<input type='text' class='form-control' id='reservationContactEmail'>
+						</div>
+					</div>
+					<div class='form-group row'>
+						<label class='col-md-3 control-label'>Website</label>
+						<div class='col-md-9'>
+							<input type='text' class='form-control' id='reservationContactWebsite'>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='reservationquestions1 panel panel-body'>
+			<legend>Event Information</legend>
+			<div class='col-md-6'>
+				<div class='form-group row'>
+					<label class='col-md-3 control-label'>Event Name</label>
+					<div class='col-md-9'>
+						<input type='text' class='form-control' id='reservationEventName'>
+					</div>
+				</div>
+				<div class='form-group row'>
+					<label class='col-md-3 control-label'>Description*</label>
+					<div class='col-md-9'>
+						<textarea class='form-control' style='width:100%;height:50px' id='reservationDescription'></textarea>
+					</div>
+				</div>
+			</div>
+			<div class='col-md-6'>
+				<div class='form-group row'>
+					<label class='col-md-3 control-label'>Group Size*</label>
+					<div class='col-md-9'>
+						<input type='text' class='form-control' id='reservationGroupSize'>
+					</div>
+				</div>
+				<div class='form-group row'>
+					<label class='col-md-3 control-label'>Special Instructions</label>
+					<div class='col-md-9'>
+						<textarea class='form-control' style='width:100%;height:50px' id='reservationComments'></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='reservationquestions panel panel-body' style='display:none'>
+			<legend>Booking Specific Questions</legend>
+		</div>
+		<div class='reservationSubTotal text-center'>Subtotal: </div>
+		<div class='clearfix'></div>
+		<button class='btn btn-lg btn-primary pull-left' style='margin:10px auto auto 5%;width:100px' name='buttonReservationBack' >Back</button>
+		<button class='btn btn-lg btn-primary pull-right' style='margin:10px 5% auto auto;width:100px' name='buttonReservationBook' >Next</button>
+		<div class='clearfix'></div>
+	</div>
+</div>
+<script>
+
+	$("#aLoginNow").attr("href","/login?callback=" + window.location.pathname);
+	
+	$(function()
+	{
+		if ($('#reservationContactName').val().length < 1 && localStorage.getItem("firstname") && localStorage.getItem("lastname"))
+			$('#reservationContactName').val(localStorage.getItem("firstname") + " " + localStorage.getItem("lastname"));
+		if ($('#reservationContactPhone').val().length < 1 && localStorage.getItem("phone"))
+			$('#reservationContactPhone').val(localStorage.getItem("phone"));
+		if ($('#reservationContactEmail').val().length < 1 && localStorage.getItem("email"))
+			$('#reservationContactEmail').val(localStorage.getItem("email"));
+		
+	});
+	
+	if (!localStorage.getItem("email"))
+	{
+		$("div.alertReservationInfo").show();
+	}
+
+	var booking = null;
+	var data = {method:'fGetSessionBooking'};
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success")
+			booking = $data['data'];
+		
+		if (booking == null || booking['resources'].length < 1)
+		{
+			$("div.bookHeader").css({'min-height':'30px'});
+			$("div.panel-body:first").empty();
+			$("div.panel-body:first").append("<div class='alert alert-danger'>Your saved booking data was invalid, or expired, please start a new reservation</div>");
+			$("button[name^='buttonReservation']").css({"display":"none"});
+			$("#reservationSubTotal").css({"display":"none"});
+		}
+		else
+		{
+			console.log("booking info",booking);
+			InsertBookingNav(booking);
+			
+			PopulateBookVenueData(booking);
+			$("#reservationTitle").empty().append("<h3>Reservation #" + booking['id'] + " for " + booking['name'] + "</h3>");
+			
+			if (booking['info'])
+			{
+				$("#reservationEventName").val(booking['info']['name']);
+				$("#reservationDescription").val(booking['info']['description']);
+				$("#reservationGroupSize").val(booking['info']['headcount']);
+				$("#reservationComments").val(booking['info']['comments']);
+				$("#reservationContactName").val(booking['info']['contact_name']);
+				$("#reservationContactCompany").val(booking['info']['contact_company']);
+				$("#reservationContactTitle").val(booking['info']['contact_title']);
+				$("#reservationContactPhone").val(booking['info']['contact_phone']);
+				$("#reservationContactEmail").val(booking['info']['contact_email']);
+				$("#reservationContactWebsite").val(booking['info']['contact_website']);
+			}
+			
+			if (booking['headcount'])
+				$("#reservationGroupSize").val(booking['headcount']);
+				
+			var data = {
+				method:'fGetReservationQuestions',
+				booking:booking
+			};
+			Post(data).then(function($data)
+			{
+				if ($data['result'] == "success")
+				{
+					var questions = $data['data'];
+					AddReservationQuestions(questions, booking);
+					
+					if (questions && questions.length > 0)
+						$("div.reservationquestions").show();
+				}
+			});
+		}
+	});
+		
+    $("[name=buttonReservationBack]").off("click").click(function (event)
+	{
+		event.preventDefault();
+		event.preventDefault();
+		var errors = ValidateQuestions();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid personnel hours specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			UpdateBookingArrayinfo(booking);
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{				
+				var page = "personnel";
+				if (booking['functionality']['personnel'] != 1)
+				{
+					page = "food";
+					if (booking['functionality']['menus'] != 1)
+						page = "addons";
+                }
+				RouteReservationRequest(page);
+			});
+        }
+    });
+	
+	$("[name=buttonReservationBook]").off("click").on("click", function(event)
+	{
+		localStorage.setItem("reservationEventName",$("#reservationEventName").val());
+		localStorage.setItem("reservationDescription",$("#reservationDescription").val());
+		localStorage.setItem("reservationContactEmail",$("#reservationContactEmail").val());
+		event.preventDefault();
+		var errors = ValidateQuestions();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid personnel hours specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			if (localStorage.getItem('email') && $("#reservationContactEmail").val() != localStorage.getItem('email'))
+			{
+				$("#mainModalHeader").empty().append("Make reservation on behalf of someone else?");
+				$("#mainModalAcceptBtn").empty().append("Yes").css({"display":"inline"});
+				$("#mainModalCloseBtn").empty().append("No").css({"display":"inline"});
+				$("#mainModalBody").empty().append("The customer email address you specified does not match your InviteBIG account's email address. Are you sure that you want to create this reservation on behalf of someone else?");
+				$("#mainModal").modal("show");
+				$("#mainModalAcceptBtn").off("click").click(function(event)
+				{
+					UpdateBookingArrayinfo(booking);
+					booking['info']['onbehalf'] = true;
+					var data = {method:'fSetSessionBooking',booking:booking};
+					Post(data).then(function($data)
+					{
+						RouteReservationRequest("order");
+					});
+					$("#mainModalBody").empty();$("#mainModal").modal("hide");
+				});
+				$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+			}
+			else
+			{
+				UpdateBookingArrayinfo(booking);
+				var data = {method:'fSetSessionBooking',booking:booking};
+				Post(data).then(function($data)
+				{
+					RouteReservationRequest("order");
+				});
+			}
+		}
+	});
+	
+	function AddReservationQuestions(questions, booking)
+	{
+		console.log("questions",questions);
+		for (var i = 0; i < questions.length; i++)
+		{
+			var q =
+				"<div class='row question' data-id='" + SanitizeAttr(questions[i]['id']) + "' data-req='" + SanitizeAttr(questions[i]['req']) + "' data-type='" + SanitizeAttr(questions[i]['type']) + "'>" +
+					"<div class='form-group'>" +
+						"<label class='col-md-3 control-label'>" + questions[i]['question'] + (questions[i]['req'] == "yes"?"*":"") + "</label>" +
+						"<div class='col-md-9'>";
+						
+			switch (questions[i]['type'])
+			{
+				case "text":
+					q += "<textarea class='form-control' style='width:100%;height:50px'" + (questions[i]['req'] == "yes"?"placeholder='Required...'":"") + "></textarea>";
+					break;
+					
+				case "check":
+					q += "<input type='checkbox'>";
+					break;
+					
+				case "radio":
+					if (questions[i]['choices'].length > 0)
+					{
+						for (var i2 = 0; i2 < questions[i]['choices'].length; i2++)
+							q += "<input type='radio' name='" + SanitizeAttr(questions[i]['id']) + "' value='" + SanitizeAttr(questions[i]['choices'][i2]['id']) + "'>" + questions[i]['choices'][i2]['choice'] + "<br>";						
+					}
+					break;
+				
+				case "select":
+					if (questions[i]['choices'].length > 0)
+					{
+						q += "<select class='form-control'>";
+						
+						for (var i2 = 0; i2 < questions[i]['choices'].length; i2++)
+							q += "<option value='" + SanitizeAttr(questions[i]['choices'][i2]['id']) + "'>" + questions[i]['choices'][i2]['choice'] + "</option>";						
+						
+						q += "</select>";
+					}
+					break;
+            }
+			
+            q +=
+						"</div>" +
+					"</div>" +
+				"</div>";
+			
+			$("div.reservationquestions").append(q);
+        }
+        if (booking['questions'])
+		{
+			for (var i = 0; i < booking['questions'].length; i++)
+			{
+				switch (booking['questions'][i]['type'])
+				{
+					case "text":
+						$("div.question[data-id='" + SanitizeAttr(booking['questions'][i]['id']) + "']").find("textarea").append(booking['questions'][i]['answer']);
+						break;
+						
+					case "check":
+						if (booking['questions'][i]['answer'] == "checked")
+							$("div.question[data-id='" + SanitizeAttr(booking['questions'][i]['id']) + "']").find("input").prop("checked",true);
+						break;
+						
+					case "radio":
+						$("div.question[data-id='" + SanitizeAttr(booking['questions'][i]['id']) + "']").find("input[value='" + SanitizeAttr(booking['questions'][i]['answer']) + "']").prop("checked",true);
+						break;
+						
+					case "select":
+						$("div.question[data-id='" + SanitizeAttr(booking['questions'][i]['id']) + "']").find("select[value='" + SanitizeAttr(booking['questions'][i]['answer']) + "']").prop("selected",true);
+						break;
+                }
+            }
+        }
+    }
+    function ValidateQuestions()
+	{
+		var error = [];
+		
+		$("#reservationContactPhone").val($("#reservationContactPhone").val().replace(/^[0-9\-]$/g,""));
+		$("#reservationGroupSize").css({"border-color":"#CCC"});
+		$("#reservationContactName").css({"border-color":"#CCC"});
+		$("#reservationContactPhone").css({"border-color":"#CCC"});
+		$("#reservationContactEmail").css({"border-color":"#CCC"});
+		$("#reservationDescription").css({"border-color":"#CCC"});
+		
+		if ($("#reservationDescription").val().length < 2)
+		{
+			error.push("Please provide an event description");
+			$("#reservationDescription").css({"border-color":"#F88"});
+		}
+		if ($("#reservationContactName").val().length < 2)
+		{
+			error.push("Please provide a valid contact name");
+			$("#reservationContactName").css({"border-color":"#F88"});
+		}
+		if ($("#reservationContactPhone").val().length < 9)
+		{
+			error.push("Contact phone number must include area code");
+			$("#reservationContactPhone").css({"border-color":"#F88"});
+		}
+		if ($("#reservationContactEmail").val().length < 6 || $("#reservationContactEmail").val().indexOf("@") < 0)
+		{
+			error.push("Please provide a valid contact email address");
+			$("#reservationContactEmail").css({"border-color":"#F88"});
+		}
+		if ($("#reservationGroupSize").val().length < 1)
+		{
+			error.push("Please specify your expected group size (number of people attending)");
+			$("#reservationGroupSize").css({"border-color":"#F88"});
+		}
+		if (/^[0-9]*$/.test($("#reservationGroupSize").val()) == false)
+		{
+			error.push("The group size field can only contain numbers");
+			$("#reservationGroupSize").css({"border-color":"#F88"});
+		}
+		
+		var questionError = false;
+		
+		$("div.question").each(function()
+		{
+			if ($(this).attr("data-req") == "yes")
+			{
+				$(this).find("textarea").css({"border-color":"#CCC"});
+				$(this).css({"border":"none"});
+				
+				if ($(this).find("textarea").length > 0 && $(this).find("textarea").val().length < 1)
+				{
+					$(this).find("textarea").css({"border-color":"#F88"});
+					questionError = true;
+				}
+				
+				if ($(this).find("input[type='checkbox']").length > 0 && $(this).find("input[type='checkbox']").prop("checked") == false)
+				{
+					$(this).css({"border":"1px solid #F88"});
+					questionError = true;
+				}
+				
+				if ($(this).find("input[type='radio']").length > 0 && $(this).find("input[type='radio']:checked").length < 1)
+				{
+					$(this).css({"border":"1px solid #F88"});
+					questionError = true;
+				}
+				
+				if ($(this).find("option").length > 0 && $(this).find("option:selected").length < 1)
+				{
+					$(this).css({"border":"1px solid #F88"});
+					questionError = true;
+				}
+			}
+		});
+		
+		if (questionError == true)
+			error.push("Please answer the required questions");
+			
+		return error;
+    }
+</script>

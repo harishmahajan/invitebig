@@ -1,0 +1,2 @@
+set tax rate
+set booking fee rate

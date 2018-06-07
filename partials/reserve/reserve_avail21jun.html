@@ -1,0 +1,312 @@
+<div class='container'>
+	<div id='firstAvailWidget' class='availwidget' style='font-size:12px'>
+		<div class='clearfix'></div>
+		<div class='text-center container' style='margin:0 0 20px 0;width:100%;padding:0'>
+			<i class='fa fa-chevron-left fa-3' style='cursor:pointer;color:rgb(66,86,105);float:left;padding-top:35px;position:relative' id='paginationBack'></i>
+			<i class='fa fa-chevron-right fa-3' style='cursor:pointer;color:rgb(66,86,105);float:right;padding-top:35px;position:relative' id='paginationForward'></i>
+			<ul class='pagination pagination-large' style='display:inline;float:left;margin:-45px auto auto auto;width:100%;padding:0 40px 0 40px;z-index:-1'>
+				<li><a href='#' id='page1' name='paginationGroup'></a></li>
+				<li><a href='#' id='page2' name='paginationGroup'></a></li>
+				<li><a href='#' id='page3' name='paginationGroup'></a></li>
+				<li><a href='#' id='page4' name='paginationGroup'></a></li>
+				<li><a href='#' id='page5' name='paginationGroup'></a></li>
+				<li><a href='#' id='page6' name='paginationGroup'></a></li>
+				<li><a href='#' id='page7' name='paginationGroup'></a></li>
+			</ul>
+			<div class='clearfix'></div>
+		</div>
+		<div class='text-center bookTotalsBar' id='bookTotalsBar'><button class='reservationBtnClear pull-left' style='margin-bottom:20px'>CLEAR SELECTIONS</button><button class='reservationMakeRes pull-right' style='display:none'>MAKE RESERVATION</button><div class='pull-right'><span class='reservationTotal'></span></div></div>
+		<div class='filtercontainer'>
+			<div class='bookfilter text-center' style='margin-bottom:0'>
+				<div class='row'>
+					<div class='col-md-6'>
+						<label>Group Size:</label>
+						<input id='groupSize' type='text' class='form-control' value=''/>
+					</div>
+					<div class='col-md-6'>
+						<label>Starting On:</label>
+						<div class='form-group' style='display:inline-block;margin-bottom:0'>
+							<input type='text' class='form-control' id='bookFilterDate' style='width:200px;text-align:left;padding-left:12px' placeholder='Date...'>
+							<span class='append fa fa-calendar' style='top:16px;right:30px'></span>
+						</div>
+						<select id='bookStartTime' style='display:none'>
+							<option value='0'>12:00am</option>
+							<option value='3600'>1:00am</option>
+							<option value='7200'>2:00am</option>
+							<option value='10800'>3:00am</option>
+							<option value='14400' selected>4:00am</option>
+							<option value='18000'>5:00am</option>
+							<option value='21600'>6:00am</option>
+							<option value='25200'>7:00am</option>
+							<option value='28800'>8:00am</option>
+							<option value='32400'>9:00am</option>
+							<option value='36000'>10:00am</option>
+							<option value='39600'>11:00am</option>
+							<option value='43200'>12:00pm</option>
+							<option value='46800'>1:00pm</option>
+							<option value='50400'>2:00pm</option>
+							<option value='54000'>3:00pm</option>
+							<option value='57600'>4:00pm</option>
+							<option value='61200'>5:00pm</option>
+							<option value='64800'>6:00pm</option>
+							<option value='68400'>7:00pm</option>
+							<option value='72000'>8:00pm</option>
+							<option value='75600'>9:00pm</option>
+							<option value='79200'>10:00pm</option>
+							<option value='82800'>11:00pm</option>
+						</select>
+						<button id='bookFind' class='btn btn-primary'>Find</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='clearfix'></div>
+		<div class='availhours'></div>
+		<div class='clearfix'></div>
+		<div class='text-center bookTotalsBar'  style='display:none'><button class='reservationBtnClear pull-left' style='margin-bottom:20px'>CLEAR SELECTIONS</button><button class='reservationMakeRes pull-right' style='display:none'>MAKE RESERVATION</button><div class='pull-right'><span class='reservationTotal'></span></div></div>
+		<div class='clearfix'></div>
+	</div>
+</div>
+
+<script>
+	$(function() 
+	{
+		$("body").css({"min-width":"755px","_width":"expression( document.body.clientWidth > 755 ? '755px' : 'auto' )"});
+		//$("#bookStartTime").SumoSelect();
+		
+		var urlfilter = unparam(window.location.href.split('?')[1]);
+		if (urlfilter == "undefined") urlfilter = [];
+		
+		var vname = window.location.href.split("/reserve/book-an-event-at-")[1];
+		
+		if (!vname) vname = "";
+		
+		if (vname.indexOf("?") > 0)
+			vname = vname.split("?")[0];
+		if (vname.length < 1)
+			$('#bodyContent').empty().append("<div class='container alert alert-danger' style='margin:20px auto'>Failed to load data, no venue specified</div>");
+		else 
+		{
+			if (urlfilter['starting']){
+				$("#bookStartTime option[value=" + urlfilter['starting'] + "]").attr("selected","selected");
+				//$("#bookStartTime")[0].sumo.reload();
+			}
+			
+			var booking = null;
+			var data = {method:'fGetSessionBooking'};
+			Post(data).then(function($data)
+			{
+				if ($data['result'] == "success")
+					booking = $data['data'];
+			
+				if (booking)
+				{
+					if (booking['date'])
+					{
+						$("#bookFilterDate").val(FormatDate(booking['date'],"MMMM D, YYYY"));
+					}
+					if (booking['headcount'])
+					{
+						$("#groupSize").val(booking['headcount']);
+					}
+					
+					var selections = [];
+					if (window.location.href.indexOf(booking['url']) > 0)
+					{
+						for (var i = 0; i < booking['resources'].length; i++)
+						{
+							var r = {
+								id: booking['resources'][i]['id'],
+								name: booking['resources'][i]['name'],
+								start: booking['resources'][i]['start'],
+								stop: booking['resources'][i]['stop'],
+								cost: booking['resources'][i]['cost']
+							};
+							
+							selections.push(r);
+						}
+					}
+					
+					$("#firstAvailWidget").attr("data-selections",JSON.stringify(selections));
+					//alert(JSON.stringify(selections));
+				}
+				//console.log("Tester :-  ",JSON.stringify(urlfilter));
+				LoadVenueAvailability($("#firstAvailWidget"),vname,JSON.stringify(urlfilter));
+			});
+		}
+	});
+	
+	$("button.reservationMakeRes").on("click",function(event)
+	{
+		if ($("#firstAvailWidget").attr("data-showGroupSizePopup") == "true" && ($("#groupSize").val() == "" || $("#groupSize").val() <= 0))
+		{
+			$("#mainModalHeader").empty().append("How many people will be attending this event?");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div style='display:block;margin:30px auto;width:200px'><label class='control-label'>Attendees: </label><input id='errGroupSize' type='text' class='form-control' style='display:inline-block;width:100px;margin-left:10px' value=''/><div class='clearfix'></div></div>");
+			$("#mainModal").modal("show");
+			$("#mainModalAcceptBtn").off("click").click(function(event)
+			{
+				if ($("#errGroupSize").val().length > 0 && parseInt($("#errGroupSize").val()) == $("#errGroupSize").val() && $("#errGroupSize").val() > 0)
+				{
+					$("#groupSize").val($("#errGroupSize").val());
+					$("#mainModalBody").empty();$("#mainModal").modal("hide");
+					MakeReservation();
+				}
+				else
+				{
+					$("#errGroupSize").css({"border-color":"#F88"});
+				}
+			});
+		}
+		else MakeReservation();
+		
+    });
+	
+	function MakeReservation()
+	{
+		var m = CheckMinTime();
+		if (m.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Minimum reservation duration not met");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			$("#mainModalBody").find("ul").first().append("<li>" + m + "</li>");
+			$("#mainModal").modal("show");
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide"); });
+			$("button.reservationMakeRes").css({"display":"none"});
+		}
+		else
+		{		
+			var booking = BuildBookingArray();
+			
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{		
+				RouteReservationRequest("addons");
+			});
+        }
+	}
+	
+	/* JQUERY-UI */
+	$("#bookFilterDate").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "-1:+5",
+		dateFormat: 'MM d, yy'
+	});
+	$("#bookFilterDate").parent("div").find("span").on('click',function(event){$(this).prev("input").datepicker("show");});
+	
+	$("#bookFind").off("click").on("click", function(event)
+	{
+		event.preventDefault();
+		// 1. Format the bookFilterDate in the browser's TZ as a unix timestamp
+		// 2. Subtract the browser's TZ offset
+		// 3. Add the venue's TZ offset
+		
+		// Example: Browser in LA time, venue in NY time
+		// 1. Format "January 1, 2016 00:00:00 PST" as a unix timestamp = 1451635200
+		// 2. Subtract LA TZ offset (480*60) = 1451606400
+		// 3. Add NY TZ offset (300*60) = 1451624400 = "01/01/2016 05:00:00 UTC" = "01/01/2016 00:00:00 EST"
+
+		var d = parseInt(FormatDate($("#bookFilterDate").val(),"X"));
+			d -= ((new Date()).getTimezoneOffset() * 60);
+			d += (moment.tz.zone($("#bookTimezone").val()).offset(d)*60);
+		//}
+		
+		var filter = {
+			types: "",
+			size: 0,
+			date: d,
+			starting: $("#bookStartTime option:selected").val()
+		};
+
+		var u = "/reserve/book-an-event-at-" + $("#bookShortUrl").val() + "?" + $.param(filter);
+		
+		if (typeof window.history.pushState !== "undefined")
+			history.pushState(true, null, u);
+		else window.location.href = u;
+		
+		$("div.availwidget li.active").removeClass("active");
+		$("#page4").parents("li").first().addClass("active");
+		LoadVenueAvailability($("#firstAvailWidget"), $("#bookShortUrl").val(), JSON.stringify(filter));
+	});
+		
+	$("#paginationForward").click(function(event)
+	{
+		$("div.availwidget li.active").removeClass("active");
+		
+		$("#page1").html($("#page2").html());$("#page1").attr("data-date",$("#page2").attr("data-date"));
+		$("#page2").html($("#page3").html());$("#page2").attr("data-date",$("#page3").attr("data-date"));
+		$("#page3").html($("#page4").html());$("#page3").attr("data-date",$("#page4").attr("data-date"));
+		$("#page4").html($("#page5").html());$("#page4").attr("data-date",$("#page5").attr("data-date"));
+		$("#page5").html($("#page6").html());$("#page5").attr("data-date",$("#page6").attr("data-date"));
+		$("#page6").html($("#page7").html());$("#page6").attr("data-date",$("#page7").attr("data-date"));
+		
+		var t = moment.unix(parseInt($("#page7").attr("data-date"))).add(1,'d').format("X");
+		$("#page7").empty().append("<span>" + FormatDate(t,"dddd") + "</span>" + FormatDate(t,"MMMM D"));
+		$("#page7").attr("data-date",t);
+		
+		$("div.availwidget ul.pagination li a[data-date=" + $("div.availwidget").first().attr("data-date") + "]").parents("li").first().addClass("active");
+		
+		PaginationSelect();
+	});
+	
+	$("#paginationBack").click(function(event)
+	{			
+		$("div.availwidget li.active").removeClass("active");
+		
+		$("#page7").html($("#page6").html());$("#page7").attr("data-date",$("#page6").attr("data-date"));
+		$("#page6").html($("#page5").html());$("#page6").attr("data-date",$("#page5").attr("data-date"));
+		$("#page5").html($("#page4").html());$("#page5").attr("data-date",$("#page4").attr("data-date"));
+		$("#page4").html($("#page3").html());$("#page4").attr("data-date",$("#page3").attr("data-date"));
+		$("#page3").html($("#page2").html());$("#page3").attr("data-date",$("#page2").attr("data-date"));
+		$("#page2").html($("#page1").html());$("#page2").attr("data-date",$("#page1").attr("data-date"));
+		
+		var t = moment.unix(parseInt($("#page1").attr("data-date"))).subtract(1,'d').format("X");
+		$("#page1").empty().append("<span>" + FormatDate(t,"dddd") + "</span>" + FormatDate(t,"MMMM D"));
+		$("#page1").attr("data-date",t);
+		
+		$("div.availwidget ul.pagination li a[data-date=" + $("div.availwidget").first().attr("data-date") + "]").parents("li").first().addClass("active");
+		
+		PaginationSelect();
+	});
+	
+	$("[name='paginationGroup']").off("click").click(function(event)
+	{
+		event.preventDefault();
+		if (!$(this).hasClass("active"))
+		{
+			$("#bookFilterDate").val(FormatDate($(this).attr("data-date"),"MMMM D, YYYY"));
+			//alert(FormatDate($(this).attr("data-date"),"MMMM D, YYYY"));
+			console.log($(this).attr("data-date"),"MMMM D, YYYY");
+			$("#bookFind").trigger("click");
+        }
+    });
+	
+	$("button.reservationBtnClear").off("click").click(function(event)
+	{
+		$("div.availwidget").first().attr("data-selections","[]");
+		$("div.avail_selected,div.avail_parent_selected").each(function()
+		{
+			$(this).removeClass().addClass("avail_available").find("div.avail_text").empty().append("Available");
+		});
+		$("div.availwidget .paginationSelected").remove();
+		
+		RedrawTimeSlots();
+		$("span.reservationTotal").empty();
+		$("button.reservationMakeRes").hide();
+		$('.bookTotalsBar').hide();	  // To hide "Clear Selection" Button
+		Post({method:'fSetSessionBooking',booking:0});
+	});
+	
+
+    if ( $("div").hasClass( "avail_selected" ) ) {
+		 //alert("5"); 
+    }
+ 
+
+	</script>

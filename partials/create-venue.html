@@ -1,0 +1,55 @@
+<h1 style='text-align:center;font-weight:bold;color:#2C3E50'>Welcome!</h1>
+<h4 style='text-align:center'>Let's jump right in and add a venue to your account</h4>
+
+<div class='container' style='max-width:1000px'>
+	<div class='panel'>
+		<div class='panel-body' id='venuecreator'></div>
+	</div>
+</div>
+
+<script>
+	if (!localStorage.getItem("email"))
+		$("h1").parent().empty().append("<br><br><div class='alert alert-danger text-center'>You must be logged in to view this page</div>");
+	else 
+	{
+		$("#billEmail").val(localStorage.getItem("email"));
+	}
+	
+	LoadPartial("/venue-creator","venuecreator",false).then(function()
+	{
+		$("#venuecreator panel-heading").first().css({'display':'none'});
+		$("#venueSubmit").text("Add This Venue");
+		$("#venueSubmit").parents(".form-group").first().css({"text-align":"center","margin-top":"0"});
+		localStorage.removeItem("tempVenueConfig");
+		
+		$("#venueCreatorInfoPane .col-lg-6:eq(1)").hide();
+		$("#venueCreatorInfoPane .col-lg-6:eq(0)").css({"width":"100%"});
+		$("#venuecreator").css({"border":"none","background":"none"});
+		
+		$("#venueVisibility").parents("div.form-group").first().hide();
+		$("#venueType").parents("div.form-group").first().after($("#venuePhone").parents("div.form-group").first());
+		$("#venueSalesTax").parents("div.form-group").removeClass("form-group-alt1").addClass("form-group-alt2");
+		$("form.fileupload").parents("div.formpan").hide();
+		
+		$("#venuePictures").append('<div class="pic""><div name="venueLogo"></div><img src="/assets/content/placeholder-720-480.png"><textarea name="caption" class="form-control pic-caption" placeholder="Caption..."></textarea></div>');
+		$("#venuePictures").append('<div class="pic""><div name="venueHeader"></div><img src="/assets/content/placeholder-1920-540.png"><textarea name="caption" class="form-control pic-caption" placeholder="Caption..."></textarea></div>');
+		$("#venuePictures").append('<div class="pic""><img src="/assets/content/placeholder-720-480.png"><textarea name="caption" class="form-control pic-caption" placeholder="Caption..."></textarea></div>');
+		$("#venueCreatorInfoPane").append("<div class='creatorcategory space' style='display:none' data-id='' data-type='1' data-capacity='10' data-seats='0' data-cleanupcost='0' data-cleanup='0' data-duration='0' data-increment='30' data-lead='0' data-autoapprove='false' data-over21='false' data-linked='true' data-rate='100' data-timeslots=0></div>");
+		$("div.space").data("deposit","No deposit, full payment required");
+		$("div.space").data("refund","Full refund always, excluding deposit");
+		$("div.space").data("data-hours",[{"start":540,"stop":1020},{"start":1980,"stop":2460},{"start":3420,"stop":3900},{"start":4860,"stop":5340},{"start":6300,"stop":6780},{"start":7740,"stop":8220},{"start":9180,"stop":9660}]);
+		$("div.space").data("data-rates",[]);
+		$("div.space").data("data-slots",[]);
+		
+		
+		$("#venueName").on('blur',function(event){ 
+			$("div.space").data("name",$(this).val() + " (Entire Venue)");
+			$("#venueBusinessName").val($(this).val());
+		});
+			
+		$("#venueDescription").on('blur',function(event){ $("div.space").data("description",$(this).val()); });
+		
+		$("#customAddress").empty().append("Address lookup failing?");
+	});
+	
+</script>

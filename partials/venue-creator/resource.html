@@ -1,0 +1,385 @@
+<script type="text/javascript">
+ 	function convertToTimestamp(d)
+ 	{
+      	var d = new Date(d);
+              var month = d.getMonth();
+              month = month + 1;
+              var fullDate =  d.getDate()+"-"+month+"-"+d.getFullYear()+" "+d.getHours()+":"+d.getMinutes();
+              //alert(fullDate);
+              var dateString = fullDate,
+			    dateTimeParts = dateString.split(' '),
+			    timeParts = dateTimeParts[1].split(':'),
+			    dateParts = dateTimeParts[0].split('-'),
+			    date;
+
+			    date = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1]);
+			    //console.log(date.getTime()); 
+			    return date.getTime();
+    }
+
+	function googleSync()
+	{
+		//alert(document.getElementById('calendarList').value);
+		//alert(localStorage.getItem("activeProfile"));
+		var myurl = window.location.href;
+		if(myurl.indexOf("bookings#profile")>0)
+		{
+			var urls="../calsync.php";
+			var urlsFlag="../calActiveflag.php";
+		}
+		else
+		{
+			var urls="calsync.php";		
+			var urlsFlag="calActiveflag.php";
+		}
+		var calendarid=document.getElementById('calendarList').value;
+		var vid = localStorage.getItem("activeProfile");
+		var rsid = localStorage.getItem("sync_resouceid");
+		//alert(calendarid);
+		var todaysdate=Date();
+        todaysdate=convertToTimestamp(todaysdate);
+        todaysdate = todaysdate.toString().substring(0, 10);
+        var postdata = {'todaysdate':todaysdate,'calendarid':calendarid,'venueid':vid,'rsid':rsid};
+		$.ajax({
+			url:urls,
+			type:"POST",
+			data:postdata,
+			success:function(res){
+				console.log(res);
+			}
+		});
+		var falgpostdata={'calid':calendarid};
+		$.ajax({
+			url:urlsFlag,
+			type:"POST",
+			data:falgpostdata,
+			success:function(res){
+
+			}
+		});
+	}
+
+</script>
+<div id='newResourceLocked' class='alert alert-danger' style='display:none'>This resource is booked, some fields cannot be changed</div>
+<div id='newResourceError' class='alert alert-danger' style='display:none'></div>
+<div id='newResourceBreadcrumbs' style='display:none;margin-bottom:20px;font-size:12px'></div>
+<div class='clearfix'></div>
+<div id='formAddNewResource' class='form-horizontal' action='#'>
+	<input type='hidden' id='newResourceID' value=''>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Resource Name</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceName' placeholder='Name of the resource' />
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Resource Type</label>
+		<div class='col-md-9'>
+			<select id='newResourceType'>
+			</select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Description</label>
+		<div class='col-md-9'>
+			<textarea class='form-control' style='width:100%;height:200px' id='newResourceDescription' placeholder='Describe this resource for people that are interested in booking it'></textarea>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Pictures <small><em>(Limit 8)</em></small></label>
+		<div class='col-md-9'>
+			<form name='fileupload' method='POST' enctype='multipart/form-data' action='#' class='col-md-12'>
+				<div id='newResourcePictures' class='row pictures' style='margin-bottom:20px' data-limit='8'></div>
+				<div class='row fileupload-buttonbar'>
+					<div class='col-md-11'>
+						<span class='btn btn-primary fileinput-button'>
+							<i class='glyphicon glyphicon-plus glyphicon-white'></i>
+							<span>Add files...</span>
+							<input type='file' name='files[]' multiple>
+						</span>
+					</div>
+				</div>
+				<table role='presentation' class='table table-striped' style='width:100%'><tbody class='files' data-toggle='modal-gallery' data-target='#modal-gallery'></tbody></table>
+			</form>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Maximum Occupancy</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceCapacity'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Seating Capacity</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceSeats' value='0'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Lead Time <small><em>(minutes)</em></small></label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceLeadTime'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Setup &amp; Cleanup Cost</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceCleanupCost' value='0'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Deposit Policy</label>
+		<div class='col-md-9'>
+			<select id='selectDepositList'></select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Refund Policy</label>
+		<div class='col-md-9'>
+			<select id='selectRefundList'></select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Addons Available</label>
+		<div class='col-md-9'>
+			<select id='selAddonsAvailable' multiple></select>
+		</div>
+	</div>
+	<div class="form-group" id="authorize-div">
+		<label class="col-md-3 control-label">Sync Calendars</label>
+		<div class="col-md-9" style='padding-top:7px;'>
+		<a id="authorize-url">
+		<img src="googlecal.png" width="100px" hieght="30px" id="authorize-button" style="cursor:pointer">
+		</a>
+
+      <!--  onclick='window.open("authentication.html","Ratting",
+"width=550,height=170,left=150,top=200,toolbar=1,status=1,");' -->
+		<div id="cal"  class="SumoSelect">
+			<select id='calendarList' class='CaptionCont SlectBox' style="width: 300px">
+			<option>Select Calendar</option>
+			</select>
+			<button class="btn btn-success" onclick="googleSync()">Update</button>
+		</div>
+		</div>
+		
+	</div>
+
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Auto-approve Bookings</label>
+		<div class='col-md-9' style='padding-top:7px'>
+			<input type='checkbox' id='newResourceAutoApprove'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>21+ Only</label>
+		<div class='col-md-9' style='padding-top:7px'>
+			<input type='checkbox' id='newResourceOver21'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Included with space</label>
+		<div class='col-md-9' style='padding-top:7px'>
+			<input type='checkbox' id='newResourceLinked' checked='true'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Billing Method</label>
+		<div class='col-md-9' style='padding-top:7px'>
+			<input type='radio' name='billingMethod' id='billingHourly' checked='true'> Hourly Rates
+			<input type='radio' name='billingMethod' id='billingTimeslot' style='margin-left:30px'> Flat Rates
+		</div>
+	</div>
+	<div class='form-group' id='fgHourlyRate'>
+		<label class='col-md-3 control-label'>Default Hourly Rate</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceRate'>
+		</div>
+	</div>
+	<div class='form-group' id='fgMinDuration'>
+		<label class='col-md-3 control-label'>Min Duration <small><em>(minutes)</em></small></label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceMinDuration' value='0'>
+		</div>
+	</div>
+	<div class='form-group' id='fgIncrement'>
+		<label class='col-md-3 control-label'>Increment <small><em>(minutes)</em></small></label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceIncrement' value='15'>
+		</div>
+	</div>
+	<div class='form-group' id='fgCleanup'>
+		<label class='col-md-3 control-label'>Cleanup Time <small><em>(minutes)</em></small></label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newResourceCleanupTime' value='0'>
+		</div>
+	</div>
+	<div class='form-group' id='fgHours'>
+		<label class='col-md-3 control-label'>Hours of Operation</label>
+		<div class='col-md-9'>
+			<table class='timeslot-widget dtable'>
+				<thead><tr><th>Days of the week</th><th>Start Time</th><th>End Time</th><th></th></tr></thead>
+				<tbody></tbody>
+				<tfoot><tr><td colspan=10><button class='btn btn-xs btn-primary tsAdd'>Add New Timeslot</button><button class='btn btn-xs btn-default ts24x7'>Add 24x7 Timeslot</button></td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+	<div class='form-group' id='fgSpecialRates'>
+		<label class='col-md-3 control-label'>Special Rates</label>
+		<div class='col-md-9'>
+			<table class='timeslot-widget timeslot-widget-rate dtable'>
+				<thead><tr><th>Days of the week</th><th>Start Time</th><th>End Time</th><th>Hourly Rate</th><th></th></tr></thead>
+				<tbody></tbody>
+				<tfoot><tr><td colspan=10><button class='btn btn-xs btn-primary tsAdd'>Add New Timeslot</button><button class='btn btn-xs btn-default ts24x7'>Add 24x7 Timeslot</button></td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+	<div class='form-group' id='fgTimeslots' style='display:none'>
+		<label class='col-md-3 control-label'>Timeslots</label>
+		<div class='col-md-9'>
+			<table class='timeslot-widget timeslot-widget-rate timeslot-widget-combinable dtable'>
+				<thead><tr><th>Days of the week</th><th>Start Time</th><th>End Time</th><th>Cost</th><th></th><th></th></tr></thead>
+				<tbody></tbody>
+				<tfoot><tr><td colspan=10><button class='btn btn-xs btn-primary tsAdd'>Add New Timeslot</button><button class='btn btn-xs btn-default ts24x7'>Add 24x7 Timeslot</button></td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+
+<script>
+
+$(document).ready(function(){
+	$("#cal").css("display","none");
+	// var myVar;
+
+	// function getCalendarlist() {
+	//     myVar = setInterval(checkCalendarlist, 3000);
+	// }
+
+
+	// function checkCalendarlist() {
+	// 	var myurl = window.location.href;
+	// 	if(myurl.indexOf("bookings#profile")>0)
+	// 		var urls="../callist.php";
+	// 	else
+	// 		var urls="callist.php";
+	// 	$.ajax({
+	// 	        url:urls,
+	// 	        type:'GET',
+	// 	        success:function(result){
+	// 				if(result!='' && result != null)
+	// 	        	{
+	// 	        		var res=JSON.parse(result);
+	// 		        	var listdata='';
+	// 		        	//console.log(res.name);
+	// 	    	    	for(var index in res.name){
+	// 					//console.log(res.name[index]);
+	// 					//console.log(res.cid[index]);
+	// 					if(res.status[index]==1)
+	// 					{
+	// 						listdata += '<option selected="selected" value='+res.cid[index]+'>';
+	// 						listdata += res.name[index];
+	// 						listdata += '</option>';
+	// 					}
+	// 					else
+	// 					{
+	// 						listdata += '<option value='+res.cid[index]+'>';
+	// 						listdata += res.name[index];
+	// 						listdata += '</option>';
+	// 					}
+	// 				}
+	// 				$("#authorize-url").css('display','none');
+	// 				$("#cal").css("display","block");
+	// 				$("#calendarList").append(listdata);      		
+	//         		stopCalanderlist();
+	// 	        	}
+	// 	    }
+	// 	  });
+	// }
+	// function stopCalanderlist() {
+	//     clearInterval(myVar);
+	// } 
+	// getCalendarlist();
+	// $(".close").click(function(){
+	// 	var myurl = window.location.href;
+	// 	if(myurl.indexOf("bookings#profile")>0)
+	// 		var urls="../callistclear.php";
+	// 	else
+	// 		var urls="callistclear.php";
+	// 	$.ajax({
+	// 		url:urls,
+	// 		type:"GET",
+	// 		success:function(result){
+	// 			console.log(result);
+	// 		}
+	// 	});
+	// });
+
+	$("#authorize-url").click(function(){
+		var myurl = window.location.href;
+		if(myurl.indexOf("bookings#profile")>0)
+		{
+			var urls="../cal5.php";
+			var filepath='../authentication.html';
+		}
+		else
+		{
+			var urls="cal5.php";
+			var filepath='authentication.html'
+		}
+		$.ajax({
+	        url:urls,
+	        type:'GET',
+	        success:function(result){
+	        var newwindow =  window.open(filepath,"googlecalander", "height=400,width=400");
+	        //newwindow.focus();
+	    }
+	});
+	});
+	
+  function calbackURL(res)
+  {
+  	var domain = result;
+  	var strWindowFeatures = "menubar=no,location=yes,resizable=no,scrollbars=no,status=yes";
+  	var myPopup = window.open(domain ,'myWindow',strWindowFeatures);
+  	//periodical message sender
+  	setInterval(function(){
+  		var message = 'Hello!  The time is: ' + (new Date().getTime());
+  		console.log('blog.local:  sending message:  ' + message);
+  		myPopup.postMessage(message,domain); //send the message and target URI
+  	},6000);
+
+  	window.addEventListener('message',function(event) {
+  		if(event.origin !== 'http://myinvitebig.com') return;
+  		console.log('received response:  ',event.data);
+  	},false);
+  	}
+  });
+  </script>
+
+<script>
+	$("input[name='billingMethod']").on('change',function()
+	{
+		if ($("#billingHourly").prop("checked"))
+		{
+			$("#fgHourlyRate").show();
+			$("#fgMinDuration").show();
+			$("#fgIncrement").show();
+			$("#fgCleanup").show();
+			$("#fgHours").show();
+			$("#fgSpecialRates").show();
+			$("#fgTimeslots").hide();
+		}
+		else
+		{
+			$("#fgHourlyRate").hide();
+			$("#fgMinDuration").hide();
+			$("#fgIncrement").hide();
+			$("#fgCleanup").hide();
+			$("#fgHours").hide();
+			$("#fgSpecialRates").hide();
+			$("#fgTimeslots").show();
+		}
+	});	
+	
+	$("table.timeslot-widget").each(function(){$(this).tsWidget();});
+	
+</script>

@@ -1,0 +1,39 @@
+<div class='panel'>
+	<div class='panel-body'>
+		<legend>My Event Calendar</legend>
+		<div class='row'>
+			<div class='col-md-4' style='min-width:250px'>
+				<div id='overviewDatePicker'></div>
+				<button class='btn btn-lg btn-primary' id='btnNewBooking' style='margin:30px auto'>Create New Booking</button>
+			</div>
+			<div class='col-md-8'>
+				<table id='overviewUpcomingEvents' class='table table-striped table-hover table-condensed table-bookings dtable'><thead><th>Start Time</th><th>Stop Time</th><th>Event Name</th><th>Cost</th></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$("#btnNewBooking").off("click").click(function(event)
+	{
+		event.preventDefault();
+		location.href = "/venues";
+	});
+	
+	/* JQUERY-UI */
+	$("#overviewDatePicker").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "2013:+5",
+		onSelect: function(event){GetUserUpcomingEvents($("#overviewDatePicker").val());},
+		dateFormat: 'MM d, yy'
+	});
+	
+	GetUserUpcomingEvents(null);
+	
+	
+</script>

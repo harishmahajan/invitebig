@@ -1,0 +1,10 @@
+User-agent: *
+Sitemap: http://www.invitebig.com/sitemap.xml
+Disallow: /dashboard
+Disallow: /logout
+Disallow: /venue-creator/*
+Disallow: /create-event/*
+Disallow: /create-venue/*
+Disallow: /verify/*
+Disallow: /booking/*
+Disallow: /inc/timezonepicker-master/*

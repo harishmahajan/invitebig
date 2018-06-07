@@ -1,0 +1,347 @@
+<div class='container'>
+	<div class='panel'>
+		<!-- <div id='reservationTitle' style='text-align:center'></div>
+		<div style='text-align:center'><h5>Confirm resource selection</h5></div> -->
+		<div class='reservationresources'></div>
+		<div class='reservationSubTotal text-center'>Subtotal: </div>
+		<div class='clearfix'></div>
+		<button class='btn btn-lg btn-primary pull-left' style='margin:10px auto auto 5%;width:100px' name='buttonReservationAvail' >Back</button>
+		<button class='btn btn-lg btn-primary pull-right' style='margin:10px 5% auto auto;width:100px' name='buttonReservationNext' >Next</button>
+		<div class='clearfix'></div>
+	</div>
+</div>
+
+<script src='/inc/js/easyResponsiveTabs.js?_=1455331660' type="text/javascript"></script>
+
+<script>	
+	
+	var booking = null;
+	var data = {method:'fGetSessionBooking'};
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success")
+			booking = $data['data'];
+			
+		if (!booking)
+		{
+			$("div.bookHeader").css({'min-height':'30px'});
+			$("div.reservationresources").append("<div class='alert alert-danger'>Your saved booking data was invalid, or expired, please start a new reservation</div>");
+			$("button[name^='buttonReservation']").css({"display":"none"});
+			$("h5").remove();
+		}
+		else
+		{
+			InsertBookingNav(booking);		
+			PopulateBookVenueData(booking);
+			
+			$("#reservationTitle").empty().append("<h3>Reservation #" + booking['id'] + " for " + booking['name'] + "</h3>");
+			
+			for (var i = 0; i < booking['resources'].length; i++)
+				AddReservationResource(booking['resources'][i]);
+			
+			if (booking['resources'].length < 1)
+			{
+				$("div.reservationresources").append("You did not select any resources.  Please go back and choose a room or resource to reserve.");
+			}
+		}
+	});
+	
+	$("[name=buttonReservationAvail]").on('click', function(event)
+	{
+		event.preventDefault();
+		if (booking)
+		{
+			RouteReservationRequest("book-an-event-at-" + booking['url']);
+		}
+		else window.location = "/";
+	});
+	
+	$("[name=buttonReservationNext]").on('click', function(event)
+	{
+		event.preventDefault();
+		var errors = ValidateAddonQuantities();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid addon quantities specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			UpdateBookingArrayAddons(booking);
+			
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{				
+				var page = "food";
+				if (booking['functionality']['menus'] != 1)
+				{
+					page = "personnel";
+					if (booking['functionality']['personnel'] != 1)
+						page = "info";
+                }
+                
+				RouteReservationRequest(page);
+			});
+		}
+	});
+	
+	function ValidateAddonQuantities()
+	{
+		var errors = [];
+			
+		$("tr.reservationresourceaddon").each(function()
+		{
+			var min = parseInt($(this).attr("data-min"));
+			var max = parseInt($(this).attr("data-max"));
+			var quantity = parseInt($(this).find("input.reservationAddonQuantity").first().val());
+			if (!quantity)
+				quantity = 0;
+			if (quantity < min || quantity > max)
+			{
+				if (min == max == 1)
+					errors.push("'" + $(this).find("h5").first().text() + "' is required, not optional");
+				else errors.push("You must specify a quantity between " + min + " and " + max + " for '" + $(this).find("h5").first().text() + "'");
+			}
+		});
+		
+		return errors;
+    }
+    function AddReservationResource(resource)
+	{
+		var div = $("<div class='reservationresource'>\
+						<div class='panel'>\
+							<div class='panel-body'>\
+								<legend>Select Addon Services and Equipment</legend>\
+								<div class='row resourceDetails'>\
+									<div class='col-xs-3'>\
+										<img class='reservationResourcePic'>\
+									</div>\
+									<div class='col-xs-9'>\
+										<div class='row'>\
+											<div class='col-xs-10'>\
+												<h4 name='reservationResourceTitle' style='margin-bottom:0'></h4>\
+											</div>\
+											<div class='col-xs-2' >\
+												<div class='reservationEditRemove'>\
+													<a href='#' name='reservationRemove'>Remove</a>\
+												</div>\
+											</div>\
+										</div>\
+										<div class='clearfix'></div>\
+										<div class='row'>\
+											<div class='col-xs-10' style='margin-bottom:10px'>\
+												<div class='reservationResourceHours'></div>\
+												<div class='reservationResourceChildren'>Included with " + resource['name'] + ": </div>\
+												<div class='reservationResourceCapacity'></div>\
+											</div>\
+											<div class='col-xs-2' >\
+												<h4 name='reservationResourceCost' style='text-align:center'></h4>\
+											</div>\
+										</div>\
+										<div class='clearfix'></div>\
+										<div class='row'>\
+											<div class='col-xs-12'>\
+												<div name='reservationResourceDescription'></div>\
+											</div>\
+										</div>\
+									</div>\
+								</div>\
+								<div class='clearfix'></div>\
+								<div class='row reservationAddons'>\
+									<div class='col-lg-12'>\
+										<div class='panel' style='margin-top:20px'>\
+											<div class='panel-heading tab-bg-dark-navy-blue'>\
+												<ul class='nav nav-tabs nav-justified '>\
+												</ul>\
+											</div>\
+											<div class='panel-body'>\
+												<div class='tab-content'>\
+												</div>\
+											</div>\
+										</div>\
+									</div>\
+								</div>\
+							</div>\
+						</div>\
+					</div>");
+		 //alert(resource['start']);
+		 //alert(resource['stop']);
+		
+		if(localStorage.getItem("startdates"))
+		{
+			//alert(localStorage.getItem("startdates"));
+			var stdate=localStorage.getItem("startdates") +","+resource['start'];
+			localStorage.removeItem("startdates");
+			localStorage.setItem("startdates",stdate);
+
+			var endate=localStorage.getItem("enddates") +","+resource['stop'];
+			localStorage.removeItem("enddates");
+			localStorage.setItem("enddates",endate);
+			//alert(stdate);
+		}
+		else
+		{
+			localStorage.setItem("startdates",resource['start']);
+			localStorage.setItem("enddates",resource['stop']);
+		}
+
+		
+		var data = {
+			method:'fGetReservationResourceData',
+			venueid: resource['id'],
+			start: resource['start'],
+			stop: resource['stop']
+		};
+		Post(data).then(function($data)
+		{
+			if ($data['result'] != "success")
+				return;
+				
+			var json = $data['data'];
+			div.attr("data-id",json['id']);
+			div.attr("data-hours",JSON.stringify(new Array({"start":resource['start'],"stop":resource['stop']})));
+			if (json['picture'] != null)
+			{
+				div.find("img.reservationResourcePic").attr("src", json['picture'].replace("/content/","/content/thumbnail/"));
+				div.find("img.reservationResourcePic").attr("alt", json['caption']);
+			}
+			div.find("[name=reservationResourceTitle]").empty().append(json['name']);
+			div.find("[name=reservationResourceDescription]").empty().append(FormatDescription(json['description']));
+			div.find(".reservationResourceCapacity").empty().append("Max Occupancy: " + json['capacity'] + " Seats: " + json['seats']);
+			
+			var included = ""
+			for (var i = 0; i < json['children'].length; i++)
+				included += json['children'][i] + ", ";
+			if (included.length > 0)
+				div.find(".reservationResourceChildren").append(included.replace(/, $/,""));
+			else div.find(".reservationResourceChildren").remove();
+			
+			for (var i = 0; i < json['addons'].length; i++)
+			{
+				var tab = 0;
+				if (json['addons'].length > 10)
+				{
+					div.find("div.reservationAddons .nav").find("li a").each(function()
+					{
+						if ($(this).text() == json['addons'][i]['type'])
+							tab = $(this).attr("href");
+					});
+				
+					if (tab == 0)
+					{
+						tab = "#" + parseInt(Math.random() * 1000000);
+						div.find("div.reservationAddons .nav").append("<li><a href='" + SanitizeAttr(tab) + "' data-toggle='tab'>" + json['addons'][i]['type'] + "</a></li>");
+					}
+				}
+				else
+				{
+					tab = "#addons-" + resource['id'] + "-" + resource['start'];
+					div.find("div.reservationAddons .panel-heading").remove();
+				}
+				
+				var tb = div.find(tab);
+				if (tb.length < 1)
+				{
+					tb = $("<div class='tab-pane' id='" + SanitizeAttr(tab.replace("#","")) + "'><table class='table table-striped table-condensed ptable'><thead><tr><th>Addons Available</th><th>Price</th><th>Order</th></tr></thead><tbody></tbody></table></div>");
+					div.find("div.reservationAddons div.tab-content").append(tb);
+				}
+				
+                var quantity = 0;
+				for (var i2 = 0; i2 < resource['addons'].length; i2++)
+				{
+					if (resource['addons'][i2]['id'] == json['addons'][i]['id'])
+						quantity = resource['addons'][i2]['quantity'];
+                }
+				if (quantity < json['addons'][i]['minimum'])
+					quantity = json['addons'][i]['minimum'];
+					
+				var addon = "<tr class='reservationresourceaddon' data-id='" + SanitizeAttr(json['addons'][i]['id']) + "' data-min='" + SanitizeAttr(json['addons'][i]['minimum']) + "' data-max='" + SanitizeAttr(json['addons'][i]['maximum']) + "' data-deliverable='" + SanitizeAttr(json['addons'][i]['deliverat']) + "' data-quantity='" + SanitizeAttr(quantity) + "' data-price='" + SanitizeAttr(json['addons'][i]['price']) + "'><td>";
+				if (json['addons'][i]['picture'].length > 0)
+				{
+					var img = $("<img class='profileTablePic' src='" + SanitizeAttr(json['addons'][i]['picture'].replace("/content/","/content/thumbnail/")) + "'/>");
+					img.attr("alt",json['addons'][i]['caption']);
+					addon += img.get(0).outerHTML;
+				}
+				addon += "<div class='media-body'><h5>" + json['addons'][i]['name'] + "</h5><p>" + FormatDescription(json['addons'][i]['description']) + "</p></div>" +
+						"<div class='clearfix'></div><div class='reservationAddonDeliverAt'><B>Deliver at: </B><select class='form-control selectReservationAddonDeliverAt'></select></div></td>";
+				addon += "<td><div class='timebold'>" + (json['addons'][i]['price'] == 0 ? 'Free' : FormatDollars(json['addons'][i]['price'])) + "</div></td>" +
+						"<td><input class='form-control reservationAddonQuantity' type='text' style='width:50px;display:inline-block' value='" + SanitizeAttr(quantity) + "'><div class='reservationAddonMinMax'>Min: " + json['addons'][i]['minimum'] + " Max: " + json['addons'][i]['maximum'] + "</div></td>"
+			
+				addon = $(addon);
+				
+				if (json['addons'][i]['maximum'] == "1")
+				{
+					var q = addon.find("input.reservationAddonQuantity");
+					q.prop("type","hidden");
+					
+					var t = $("<input name='chkAddon' type='checkbox' " + (q.val() > 0 ? 'checked' : '') + (json['addons'][i]['minimum'] == '1' ? ' disabled' : '') + ">");
+
+					addon.find("div.reservationAddonMinMax").remove();
+					q.after(t);
+					
+					t.on('click',function(event)
+					{
+						if ($(this).prop('checked'))
+							$(this).parents("tr.reservationresourceaddon").find("input.reservationAddonQuantity").val("1");
+						else $(this).parents("tr.reservationresourceaddon").find("input.reservationAddonQuantity").val("0");
+						
+						CalculateReservationSubTotal();
+					}); 
+				}
+				
+				for (var i2 = 0; i2 < json['addons'][i]['hours_limits']['list'].length; i2++)
+				{
+					addon.find("select.selectReservationAddonDeliverAt").append("<option value='" + SanitizeAttr(json['addons'][i]['hours_limits']['list'][i2]['value']) + "'>" + json['addons'][i]['hours_limits']['list'][i2]['text'] + "</option>");
+                }
+                for (var i2 = 0; i2 < resource['addons'].length; i2++)
+				{
+					if (resource['addons'][i2]['id'] == json['addons'][i]['id'])
+					{
+						addon.find("select.selectReservationAddonDeliverAt option[value='" + SanitizeAttr(resource['addons'][i2]['deliverat']) + "']").prop("selected",true);
+                    }
+                }
+				
+				tb.find("tbody").first().append(addon);
+            }
+			
+			//if (json['addons'].length < 1)
+			//	div.find("div.reservationAddons .tab-content").append("<div class='tab-pane'><table class='table table-striped table-condensed ptable'><thead><tr><th>Addons Available</th><th>Price</th><th>Order</th></tr></thead><tbody><tr><td>There are no addons available for this resource at this time</td><td></td><td></td></tr></tbody></table></div>");
+			if (json['addons'].length < 1)
+				div.find("div.reservationAddons").hide();
+				
+			div.find("div.reservationAddons ul.nav li").first().addClass("active");
+			div.find("div.reservationAddons div.tab-pane").first().addClass("active");
+			
+			
+			CalculateReservationSubTotal();
+			
+			div.find("[name=reservationResourceCost]").append(FormatDollars(resource['cost']));
+			var hours = "";
+			
+			hours = FormatDate(resource['start'],"MMMM D, YYYY",resource['timezone']) + " " + FormatTime(resource['start'],null,resource['timezone']) + " " + " - " + FormatDate(resource['stop'],"MMMM D, YYYY",resource['timezone']) + " " + FormatTime(resource['stop'],null,resource['timezone']) + " " + moment.tz.zone(resource['timezone']).abbr(resource['start']*1000);
+			
+			div.find(".reservationResourceHours").empty().append(hours);
+			div.find("div.reservationresource").first().attr("data-id",resource['id']);
+			div.find("div.reservationresource").first().attr("data-hours",JSON.stringify(new Array({"start":resource['start'],"stop":resource['stop']})));
+			
+			$("div.reservationresources").first().append(div);
+			
+			ReBindReservationControls();
+		});
+    }
+    
+    if ( $("div").hasClass( "avail_selected" ) ) {
+		 //alert("4"); 
+    }
+ 
+</script>

@@ -1,0 +1,272 @@
+<div class='container' style='text-align:center;'>
+	<h1 style='text-align:center; font-weight:bold;margin-top:50px;color:rgb(25, 64, 75)'>Sign In To Your Account</h1>
+	<h4 style='text-align:center;color:#848484;margin-bottom:50px;'>Welcome Back! It's good to see you again.</h4>
+	<div id='loginContent'>
+		<div class='emailL_RDiv'>
+			<form>
+				<div class='form-group'>
+					<input class='form-control emailInput' type='email' placeholder='Email'>
+					<span class='append fa fa-user'></span>
+				</div>
+				<div class='form-group'>
+					<input class='form-control passwordInput' type='password' placeholder='Password'>
+					<span class='append fa fa-lock'></span>
+				</div>
+				<button class='form-control' id='submitLogin'>Sign In</button>
+			</form>
+		</div>
+		<div class='orDiv'>
+			<hr class='topLine'>
+			<div class='or'>or</div>
+			<hr class='bottomLine'>
+		</div>
+		<div class='social_buttons'>
+			<div class='form-group'>
+				<button class='FBButton form-control'>
+					<i class='fa fa-facebook'></i>
+					Sign In With Facebook
+				</button>
+			</div>
+			<div class='form-group'>
+				<button class='TWButton form-control'>
+					<i class='fa fa-twitter'></i>
+					Sign In With Twitter
+				</button>
+			</div>
+			<div class='form-group'>		
+				<button class='GButton form-control'>
+					<i class='fa fa-google-plus'></i>
+					Sign In With Google
+				</button>
+			</div>
+		</div>
+		<div class='clearfix'></div>
+		<div class='linksHere'>
+			<p>
+				<a data-partial=true href="/forgot">Forgot Your Password?</a>
+			</p>
+			<p>Don't have an account yet? 
+				<a data-partial=true href="/register">Signup Here</a>
+			</p>
+			<p>Are you a venue? 
+				<a data-partial=true href="/register/venue">Start Your Free Trial</a>
+			</p>
+		</div>
+		<div class='placeCorrection' style='width:370px;display:inline-block'></div>
+	</div>
+</div>
+
+<script src='https://apis.google.com/js/client:platform.js'></script>
+<script src='https://connect.facebook.net/en_US/all.js'></script>
+
+<script type="text/javascript">
+	$(function()
+	{
+		if (localStorage.getItem("email")){
+			$("#loginContent").empty().append("<div class='alert alert-danger'>You are already logged in!</div>");
+			
+		}
+		else {
+			$("#submitLogin").on('click',function(event) 
+			{	
+				event.preventDefault();
+
+				var data = {
+					method:'fLogin',
+					email: $(".emailInput").val(),
+					password: $(".passwordInput").val()
+				};
+				Post(data).then(function($data,req){
+					loginDone($data,req);		
+				});
+			});
+	    	
+			$(".TWButton").click(function(event){
+				event.preventDefault();
+				
+				// do Twitter login
+				/*
+					var data = {method:'fTWLogin',token:token};
+					Post(data).then(function($data){
+						loginDone($data)
+					});
+				*/
+			});
+			
+			$(".GButton").click(function(event){
+				event.preventDefault();
+				
+				if (typeof gapi === "undefined" || typeof gapi.auth === "undefined")
+					console.error("Google's gapi was not loaded!");
+				else
+				{
+					gapi.auth.signIn({'callback':'googleLoginCallback',
+						'clientid':'227544064140-dt97tnuqbv13unkhu29u1rsaq94n5srr.apps.googleusercontent.com',
+						'cookiepolicy':'single_host_origin',
+						'scope':'profile email',
+						//'approvalprompt':'force',
+						'width':'iconOnly'
+					});
+				}
+			});
+			
+			$(".FBButton").click(function(event)
+			{
+				event.preventDefault();
+				if (typeof FB === "undefined")
+					console.error("Google's gapi was not loaded!");
+				else
+				{
+					FB.init({
+						appId: '1414449968793433',
+						channelUrl: '//www.invitebig.com/channel.html',
+						status: true, // check login status
+						cookie: false, // enable cookies to allow the server to access the session
+						xfbml: true	// parse XFBML
+					});
+					FB.login(function(response){
+						if (response.authResponse && response.authResponse.accessToken){	
+							FB.api('/me', function(me){		
+								if (me.id){
+									var data = {method:'fFBLogin',token:response.authResponse.accessToken};
+									Post(data).then(function($data,req){
+										loginDone($data,req)
+									});
+	                            }
+	                        });
+						} else {
+							// cancelled
+						}
+					});
+				}
+			});
+		};
+	});
+
+	function loginDone($data,req)
+	{
+		if ($data['result'] == "Must sign ToS")
+		{
+			$("#mainModalHeader").empty().append("InviteBIG Terms of Service");
+			$("#mainModalAcceptBtn").empty().append("I Agree").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Don't Agree").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<iframe style='width:100%;height:300px;border:1px solid #AAA;padding:5px' src='/partials/terms.html'></iframe><br><br>By clicking 'I Agree' below you are agreeing to the <a href='/terms'>Terms of Service</a> as well as the <a href='/privacy'>Privacy Policy</a>.");
+			$("#mainModal").modal("show");
+			
+			$("#mainModalAcceptBtn").off("click").click(function(event)
+			{
+				var data = {
+					method:'fSignContract',
+					contract:'tos'
+				};
+				Post(data).then(function($data)
+				{
+					if ($data['result'] == "success"){
+						// login again
+						req.auth = localStorage.getItem("auth");
+						Post(req).then(function($data,req2){
+							console.log("data",$data);
+							loginDone($data,req2)
+						});
+					}
+					else $("#mainModalBody").append("<br><div class='alert alert-danger'>There was an error while digitally signing this contract, please contact us for support.</div>");
+				});				
+			});
+			
+			$("#mainModalCloseBtn").off("click").click(function(event)
+			{
+				window.location.href = "/logout";
+				$("#mainModalBody").empty();$("#mainModal").modal("hide");
+			});
+		}
+		else ProcessLogin($data);
+	}
+
+	function ProcessLogin($data)
+	{
+		if ($data['result'] == "success") 
+		{
+			localStorage.clear();
+			if ($data['email'])
+				localStorage.setItem("email",$data['email']);
+			if ($data['ssoUser'])
+				localStorage.setItem("ssoUser",$data['ssoUser']);
+			if ($data['firstname'])
+				localStorage.setItem("firstname",$data['firstname']);
+			if ($data['lastname'])
+				localStorage.setItem("lastname",$data['lastname']);
+			if ($data['phone'])
+				localStorage.setItem("phone",$data['phone']);
+			if ($data['birthdate'])
+				localStorage.setItem("birthdate",$data['birthdate']);
+			if ($data['timezone'])
+				localStorage.setItem("timezone",$data['timezone']);
+			if ($data['promotions'])
+				localStorage.setItem("promotions",$data['promotions']);
+			if ($data['venueRights'])
+				localStorage.setItem("venueRights",JSON.stringify($data['venueRights']));
+			localStorage.setItem("activeProfile","me");
+			localStorage.setItem("lastDashboardAccount","me");
+			
+			if ($data['venueRights'] && $data['venueRights'].length > 0){
+				localStorage.setItem("activeProfile",$data['venueRights'][0]['venueid']);
+				localStorage.setItem("lastDashboardAccount",$data['venueRights'][0]['venueid']);
+			}
+				
+			if (typeof heap !== "undefined")
+			{
+				heap.identify({
+					name: $data['firstname'] + " " + $data['lastname'],
+					email: $data['email'],
+					phone: $data['phone']
+				});
+			}
+			
+			if (typeof BugSnag !== "undefined")
+			{
+				BugSnag.user = {
+					email: $data['email']
+				};
+			}
+			
+			if (typeof __insp !== "undefined")
+			{
+				__insp.push(['identify', $data['email']]);
+			}
+		
+			if (typeof window.__wtw_custom_user_data === "undefined")
+				window.__wtw_custom_user_data = {};
+			window.__wtw_custom_user_data.email = $data['email'];
+			window.__wtw_custom_user_data.name = $data['firstname'] + " " + $data['lastname'];
+			
+			// send back to the previous URL if successful, or send to dashboard if no previous URL was provided
+			//  expected: /login?callback=venues
+			
+			if (window.location.href.indexOf("?callback=") > 0)
+				window.location.href = ("/" + window.location.href.split("?callback=")[1]).replace("//","/");
+			else window.location.href = "/dashboard";
+		} else {
+			$("#loginContent div.alert.alert-danger").remove();
+			$("#loginContent").prepend("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+		}
+	}
+
+	function googleLoginCallback(authResult)
+	{
+		console.log("authResult",authResult);
+		if (authResult['status']['method'] == "PROMPT")
+		{
+			if (authResult['status']['signed_in'])
+			{
+				var data = {method:'fGLogin',token:authResult['access_token']};
+				Post(data).then(function($data,req){
+					loginDone($data,req)
+				});
+			}
+			else {
+				$("#loginContent div.alert.alert-danger").remove();
+				$("#loginContent").prepend("<div class='alert alert-danger'>Failed to connect to your Google+ account!</div>");
+			}
+        }
+    }
+</script>

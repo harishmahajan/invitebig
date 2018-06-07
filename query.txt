@@ -1,0 +1,14 @@
+SELECT bookingid, booking.start,stop
+    FROM booking  
+    INNER JOIN(  
+    SELECT start  
+    FROM booking
+    GROUP BY start  
+    HAVING COUNT(bookingid) >1  
+    )temp ON booking.start= temp.start ORDER BY `booking`.`bookingid`  DESC
+
+
+
+    SELECT bookingid, booking.start,stop FROM booking INNER JOIN( SELECT start FROM booking GROUP BY start HAVING COUNT(bookingid) >1 )temp ON booking.start= temp.start ORDER BY `booking`.`bookingid`  DESC
+
+    

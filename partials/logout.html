@@ -1,0 +1,21 @@
+<div class='container'>
+	<div class='panel' style='margin:30px'>
+		<div id='divLogout' class='panel-body' style='padding:60px 20px 70px 20px;text-align:center'>
+		</div>
+	</div>
+</div>
+
+<script>
+	var data = { method: 'fLogout' };
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success")
+		{
+			localStorage.clear();
+			$("#divLogout").empty().append("<h1>You have been logged out</h1>");
+			setTimeout(function(){ window.location = '/'; }, 2500);
+		}
+		else $("#div.logout").empty().append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+	});
+	
+</script>

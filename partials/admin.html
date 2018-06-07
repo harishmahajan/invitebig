@@ -1,0 +1,319 @@
+<div style='margin:30px'>
+	<div class='panel'>
+		<div class="panel-heading tab-bg-dark-navy-blue" style='padding:0'>
+			<ul id='admin-page' class="nav nav-tabs nav-justified ">
+				<li id='adminOverview' class='active'><a href='#aPaneOverview' data-toggle='tab'>Overview</a></li>
+				<li id='adminUsers'><a href='#aPaneUsers' data-toggle='tab'>Users</a></li>
+				<li id='adminVenues'><a href='#aPaneVenues' data-toggle='tab'>Venues</a></li>
+				<li id='adminConfigs'><a href='#aPaneConfigs' data-toggle='tab'>Venue Config</a></li>
+				<li id='adminApproval'><a href='#aPaneApproval' data-toggle='tab'>Approval Center</a></li>
+				<li id='adminBookings'><a href='#aPaneBookings' data-toggle='tab'>Bookings</a></li>
+				<li id='adminFinances'><a href='#aPaneFinances' data-toggle='tab'>Finances</a></li>
+			</ul>
+		</div>
+		<div class='panel-body'>
+			<div class='tab-content'>
+				<div class='tab-pane active' id='aPaneOverview'>
+					<div class='panel'>
+						<div class='panel-body'>
+							<h1>InviteBIG Overview</h1>
+							<table id='adminStats' class='table table-striped table-condensed dtable' style='width:auto;margin-top:20px'>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			
+				<div class='tab-pane' id='aPaneUsers'>
+					<div class='panel'>
+						<div class='panel-body'>
+							<h1>InviteBIG Users</h1>
+							Role 0=Normal User, 1=Event Creator, 2=Venue Creator, 999=Site Admin<br>
+							<table id='adminUsers' class='table table-striped table-condensed dtable' style='width:auto;margin-top:20px'>
+								<thead><tr>
+									<th>ID</th>
+									<th>Role</th>
+									<th>Email</th>
+									<th>Name</th>
+									<th>Phone</th>
+									<th>Created</th>
+									<th>Last Login</th>
+								</tr></thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<div class='tab-pane' id='aPaneVenues'>
+					<div class='panel'>
+						<div class='panel-body'>
+							<h1>InviteBIG Venues</h1>
+							<table id='adminVenues' class='table table-striped table-condensed dtable' style='width:auto;margin-top:20px'>
+								<thead><tr>
+									<th>ID</th>
+									<th>UID</th>
+									<th>Owner Name</th>
+									<th>Venue Name</th>
+									<th>Venue Phone</th>
+									<th>Visibility</th>
+									<th>Created</th>
+									<th>Bookings</th>
+									<th>Plan</th>
+									<th>Plan Status</th>
+									<th>Status</th>
+									<th>Guide</th>
+								</tr></thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<div class='tab-pane' id='aPaneConfigs'>
+					<div class='panel'>
+						<div class='panel-body'>
+							<select id='adminConfigList'></select>
+							<div id='adminConfigPane'></div>
+						</div>
+					</div>
+				</div>
+			
+				<div class='tab-pane' id='aPaneApproval'>
+					<div class='panel'>
+						<div class='panel-body'><h1>Approve New Venue Profiles</h1>
+							<table id='tblApprove' class='table table-condensed table-striped table-hover dtable'>
+							<thead><tr><th>Venue Name</th><th>Created</th><th>Action</th></tr></thead>
+							<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			
+				<div class='tab-pane' id='aPaneBookings'>
+				</div>
+			
+				<div class='tab-pane' id='aPaneFinances'>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	LoadAdminOverviewPane();
+	LoadAdminUsersPane();
+	LoadAdminVenuesPane();
+	LoadAdminVenueConfigPane();
+	LoadAdminVenueApprovalPane();
+	
+	function LoadAdminVenueApprovalPane()
+	{
+		var data = { method:'fGetVenueApprovalRequests' };
+		Post(data).then(function($data)
+		{
+			if ($data['result'] == "success") 
+			{
+				if (!$data['venues'] || $data['venues'].length < 1)
+					$("#tblApprove tbody").append("<tr><td colspan=3>No venue approval requests found</td></tr>");
+				else
+				{
+					for (var i=0; i<$data['venues'].length; i++)
+					{
+						var created = FormatTime($data['venues'][i]['created'],"MMMM D h:mma");
+						var v = $data['venues'][i];
+						$("#tblApprove tbody").append("<tr><td><a data-partial=true href='/venue/" + v['url'] + "'>" + v['name'] + "</td><td>" + created + "</td><td>" +
+							"<button name='buttonApprove' class='btn btn-success btn-sm' data-id='" + SanitizeAttr(v['id']) + "'>Approve</button>" +
+							"<button name='buttonDeny' class='btn btn-danger btn-sm' data-id='" + SanitizeAttr(v['id']) + "'>Deny</button></td></tr>");
+					}
+				}
+			} else 
+			{
+				$("#tblApprove tbody").append("<tr><td colspan=3><div class='alert alert-danger'>" + $data['result'] + "</div></td></tr>");
+			}
+			
+			$("[name='buttonApprove'],[name='buttonDeny']").on('click', function(event)
+			{
+				var data = { 
+					method:($(this).attr('name') == 'buttonApprove' ? 'fAdminApproveVenue' : 'fAdminDenyVenue'), 
+					venueid:$(this).attr("data-id")
+				};
+				
+				Post(data).then(function($data)
+				{
+					var td = $(this).parents("td").first();
+					td.empty();
+					
+					if ($data['result'] == "success") 
+					{
+						if ($(this).attr('name') == 'buttonApprove')
+							td.append("<div style='color:green'>Approved!</div>");
+						else td.append("<div>Denied!</div>");
+					}
+					else td.append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+				});
+			});
+		});
+	}
+	
+	function LoadAdminVenueConfigPane()
+	{
+		var data = {method:'fAdminGetConfigList'};
+		Post(data).then(function($data)
+		{
+			if ($data['result'] == "success")
+			{
+				$("#adminConfigList").empty();
+				$("#adminConfigPane").empty();
+				
+				for (var i=0; i<$data['venues'].length; i++)
+				{
+					var v = $data['venues'][i];
+					$("#adminConfigList").append("<option value='" + SanitizeAttr(v['id']) + "' data-tz='" + SanitizeAttr(v['tz']) + "'>" + v['name'] + "</option>");
+				}
+				
+				$("#adminConfigList").SumoSelect();
+				
+				$("#adminConfigList").on('change',function(event)
+				{
+					$("#adminConfigPane").empty();
+					
+					//var oldP = localStorage.getItem("activeProfile");
+					localStorage.setItem("activeProfile",$("#adminConfigList option:selected").attr("value"));
+					LoadPartial("/venue-creator","adminConfigPane").done(function()
+					{
+						var venueurl = $("#shorturl").val();
+						$("#adminConfigPane div.panel:first").before("<div class='panel-body' id='venueProfileLinks'><div class='row'><div class='col-lg-12'>Venue Profile: <a id='overviewShortURL' href='#'></a><br>Create Booking: <a id='overviewBookURL' href='#'></a></div></div></div>");
+						$("#overviewShortURL").attr("href","/venue/"+venueurl);
+						$("#overviewShortURL").text("/venue/"+venueurl);
+						$("#overviewBookURL").attr("href","/reserve/book-an-event-at-"+venueurl);
+						$("#overviewBookURL").text("/reserve/book-an-event-at-"+venueurl);
+						//localStorage.setItem("activeProfile",oldP);
+					});
+				});
+			}
+			else $("#adminConfigPane").append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+		});
+	}
+	
+	function LoadAdminOverviewPane()
+	{
+		var data = {method:'fAdminGetOverview'};
+		Post(data).then(function($data)
+		{
+			if ($data['result'] == "success")
+			{
+				$('#adminStats tbody').append("<tr><td><b>Venue Count</b></td><td></td><td>" + $data['stats']['totalVenues'] + "</td></tr>" +
+				"<tr><td></td><td>Public Venues</td><td>" + $data['stats']['publicVenues'] + "</td></tr>" +
+				"<tr><td colspan=10></td></tr>" +
+				"<tr><td><b>User Count</b></td><td></td><td>" + $data['stats']['totalUsers'] + "</td></tr>" +
+				"<tr><td></td><td>Facebook Users</td><td>" + $data['stats']['fbUsers'] + "</td></tr>" +
+				"<tr><td></td><td>Google+ Users</td><td>" + $data['stats']['gUsers'] + "</td></tr>" +
+				"<tr><td></td><td>Twitter Users</td><td>" + $data['stats']['tUsers'] + "</td></tr>" +
+				"<tr><td></td><td>Non-SSO Users</td><td>" + (parseInt($data['stats']['totalUsers']) - (parseInt($data['stats']['fbUsers']) + parseInt($data['stats']['gUsers']) + parseInt($data['stats']['tUsers']))) + "</td></tr>");
+			}
+			else $("#aPaneOverview").empty().append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+		});
+	}
+	
+	function LoadAdminUsersPane()
+	{
+		var data = {method:'fAdminGetUsers'};
+		Post(data).then(function($data)
+		{
+			if ($data['result'] == "success")
+			{
+				for (var i=0; i<$data['users'].length; i++)
+				{
+					var d = FormatDate($data['users'][i]['time'],"MMMM D, YYYY");
+					var d2 = FormatDate($data['users'][i]['login'],"MMMM D, YYYY");
+					
+					$('#adminUsers tbody').append("<tr><td>" + $data['users'][i]['userid'] + "</td><td>" + 
+						$data['users'][i]['role'] + "</td><td>" + $data['users'][i]['email'] + "</td><td>" + 
+						$data['users'][i]['name'] + "</td><td>" + $data['users'][i]['phone'] + "</td><td>" + 
+						d + "</td><td>" + d2 + "</td></tr>");
+				}
+			}
+			else $("#aPaneOverview").empty().append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+		});
+	}
+	
+	function LoadAdminVenuesPane()
+	{
+		var data = {method:'fAdminGetVenues'};
+		Post(data).then(function($data)
+		{
+			if ($data['result'] == "success")
+			{
+				for (var i=0; i<$data['venues'].length; i++)
+				{					
+					$('#adminVenues tbody').append("<tr><td>" + $data['venues'][i]['venueid'] + "</td>" +
+						"<td>" + $data['venues'][i]['uid'] + "</td>" +
+						"<td>" + $data['venues'][i]['owner'] + "</td>" +
+						"<td>" + $data['venues'][i]['name'] + "</td>" +
+						"<td>" + $data['venues'][i]['phone'] + "</td>" +
+						"<td>" + $data['venues'][i]['visibility'] + "</td>" +
+						"<td>" + FormatDate($data['venues'][i]['created'],"MMM DD, YYYY") + "</td>" +
+						"<td>" + $data['venues'][i]['bookings'] + "</td>" +
+						"<td>" + $data['venues'][i]['plan'] + "</td>" +
+						"<td>" + $data['venues'][i]['plan-status'] + "</td>" +
+						"<td>" + $data['venues'][i]['status'] + "</td>" +
+						"<td>" + $data['venues'][i]['guide'] + "</td></tr>");
+				}
+			}
+			else $("#aPaneOverview").empty().append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+		});
+	}
+	
+</script>
+	<!--
+
+	create sprite file for thumbnails
+	
+	change venue config address, add recognition/verification/correction like USPS
+	
+	add page in admin section to change owner of venue
+	
+	add page in admin section for managing featured venues
+	
+	add "venue interior" picture in venue config, show that in search results
+	
+	change color of dashboard to designate user/venue
+	
+change "dashboard" and "overview" terms
+
+search on venue type, resource types, addon types, features, event types, proximity, group size, 
+food/beverage available, maybe date/time availability, maybe free-text search of descriptions
+
+search should be "any of selected type" or "all of selected type"
+
+
+features: pool tables, ping pong, fooseball, arcade, gambling, bar, skating, darts
+activities/uses instaed of just features?
+
+book now: show hierarchy, draw lines w/ indents and colored tabs
+
+define resource, addon, feature in venue config
+
+ensure addons cannot be over-booked?
+
+Resources are bookable by the hour
+Addons are bookable per item
+Features are not bookable, but exist in the venue
+
+make booking confirmation emails include calendar objects to be added to user's hotmail/google calendar
+
+	
+	if no active food/personnel/questions/promos, then set showFeature off
+add menu items to venue profile
+	add personnel and questions to email templates
+	personnel/food pages should only show if there is something there to show
+
+	mysqltune
+	google calendar https://fremontabbey.org/events/calendar/
+	
+	cross-browser compatibility
+	
+	promo code doesn't work if additional things are booked
+	
+	-->

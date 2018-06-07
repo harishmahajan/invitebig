@@ -1,0 +1,216 @@
+<div class='bookHeader'>
+	<div class='container'>
+		<a data-partial=true class='bookTitle' id='bookTitle'></a>
+		<div class='clearfix'></div>
+		<a data-partial=true class='bookAddress' id='bookAddress'></a>
+	</div>
+</div>
+<div class='clearfix'></div>
+<div class='bookHeading'></div>
+<div class='clearfix'></div>
+<div class='printBar container'>
+	<button id='btnContract' class='btn btn-md btn-default' style='display:none' title='View Booking Contract'><i class='fa fa-2 fa-file-text-o' style='color:#666'></i></button>
+	<button id='btnPDF' class='btn btn-md btn-default' style='display:inline-block' title='Convert to PDF'><i class='fa fa-2 fa-file-pdf-o' style='color:rgb(213, 28, 34)'></i></button>
+</div>
+<div class='clearfix'></div>
+<div id='divBooking' class='container'></div>
+
+<script src="/inc/js/invitebig-misc.js?_=1455331660" type="text/javascript"></script>
+<script src="/inc/js/invitebig-booking.js?_=1455331660" type="text/javascript"></script>
+<script src="/inc/js/invitebig-reserve.js?_=1455331660" type="text/javascript"></script>
+
+<script>
+	
+	$(function()
+	{
+		var bookingid = null;
+		var section = null;
+		
+		var args = window.location.href.split("/");
+		var pos = -1;
+		for (var i=0; i<args.length; i++)
+		{
+			if (args[i] == "booking")
+				pos = i;
+		}
+		
+		if (typeof args[pos+1] !== 'undefined')
+			bookingid = args[pos+1];
+		if (typeof args[pos+2] !== 'undefined')
+			section = args[pos+2];
+		
+		if (bookingid)
+		{
+			LoadPartial("dashboard/booking-details.html","divBooking").done(function()
+			{
+				PopulateBookingDetails(bookingid,true).then(function()
+				{
+					ActivateBookingAccordion();
+					
+					switch (section)
+					{
+						case "pay":
+							$(".reservationreview").parents("div.panel").first().before("<div class='clearfix' style='height:20px'></div>");
+							$(".reservationreview").before("<div class='row'><div class='col-xs-9'><h2 style='margin:5px 0 0 20px'>Make a Payment</h2></div><div class='col-xs-3' id='recvBtnPDF'></div></div>");
+							$("#recvBtnPDF").append($("#btnContract").addClass('pull-right').css({"margin-left":"5px"}));
+							$("#recvBtnPDF").append($("#btnPDF").addClass('pull-right'));
+							$(".printBar").remove();
+							$("#sectionPaymentDetails").css({"border":"none"});
+							$("#sectionPayments").trigger("click");
+							$("#sectionEventInfo").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionMessages").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionFiles").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionVenueInfo").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionContactInfo").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionResources").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionAddons").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionMenus").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionPersonnel").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionQuestions").parents("div.bookingDetailsSection").first().remove();
+							$("#sectionPromos").parents("div.bookingDetailsSection").first().remove();
+							$("#reservationTitle").remove();
+							$("#sectionPayments i.glyphicon").remove();
+							$("#sectionPayments").empty().css({"background-color":"#FFF","margin-bottom":"-16px"});
+							$("#sectionPayments").off("click");
+							$(".bookingDetailsSection").first().css({"margin-bottom":"30px"});
+							break;
+							
+						case "print":
+							FormatForPDF();
+							break;
+					}
+				});
+			});
+		}
+	});
+	
+	$("#btnPDF").on('click',function(event)
+	{
+		event.preventDefault();
+		//window.open(window.location.href + "/print", "_blank");
+		FormatForPDF();
+	});
+		
+	$("#btnContract").on('click',function(event)
+	{
+		event.preventDefault();
+		if ($("#bookingContract").length > 0)
+			window.open($("#bookingContract").attr("href"), "_blank");
+	});
+	
+	function FormatForPDF()
+	{
+		var s = document.createElement('script');
+		s.src = "/inc/js/html2canvas.min.js?_=1455331660";
+		document.getElementsByTagName('head')[0].appendChild(s);
+		
+		var s2 = document.createElement('script');
+		s2.src = "/inc/js/pdfkit.min.js?_=1455331660";
+		document.getElementsByTagName('head')[0].appendChild(s2);
+
+		var s3 = document.createElement('script');
+		s3.src = "/inc/js/blob-stream.min.js?_=1455331660";
+		document.getElementsByTagName('head')[0].appendChild(s3);
+		
+		var cback = setInterval(function()
+		{
+			if (typeof html2canvas !== "undefined" && typeof PDFDocument !== "undefined" && typeof blobStream !== "undefined")
+			{
+				clearInterval(cback);
+				FormatForPDF_Go();
+			}
+		},200);
+	}
+	
+	function FormatForPDF_Go()
+	{
+		$(".printBar").remove();
+		$("div.bookingDetailsSectionHeader").trigger("click");
+		$("#reservationPayment").remove();
+		$("div.newMessage").parents("div.panel").first().remove();
+		$("#bookingFileUpload").remove();
+		$("div.bookingDetailsSectionHeader i").remove();
+		$("div.bookingDetailsSectionHeader").off('click');
+		$("div.bookingDetailsSectionHeader").css({"border-bottom":"1px solid #333","background-color":"inherit"});
+		$("div.bookingDetailsSectionBody").css({"border":"none"});
+		$("thead tr, thead th").css({"border-bottom":"1px solid #333","background-color":"inherit"});
+		$("#divBooking").css({"width":"1000px","padding":"0 60px 0 60px"});
+		$("div.reservationreview").parents("div.panel-body").removeClass("panel-body");
+		$("div.reservationreview").parents("div.panel").removeClass("panel");
+		$("#divBooking, #divBooking div").css({"background-color":"#FFF"});
+		
+		$("textarea").each(function()
+		{
+			$(this).css({"word-break":"break-all","word-wrap":"break-word"});
+			$(this).height($(this).get(0).scrollHeight);
+		});
+
+		// on the canvas the page breaks between 1352px on 1st page, 1353px on second page
+		$(".reservationreview .bookingDetailsSection, .reservationreview .bookingDetailsSection ~ .row").each(function()
+		{
+			var margin = 50;
+			var pageH = 1294;
+			var p = Math.floor(($(this).position().top / pageH));
+			
+			if ($(this).position().top + $(this).height() > ((p+1) * pageH) - margin && $(this).height() <= pageH)
+				$(this).before("<div class='clearfix' style='/*background-color:red*/;height:" + (((p+1) * pageH + margin) - $(this).position().top) + "px'></div>");
+		});
+		
+		var x = $("#divBooking").height();
+		var i = 0;
+		while (i < x)
+		{
+			$("#divBooking").append("<div style='top:" + i + "px;position:absolute;width:100%;/*background-color:blue*/;height:1px'></div>");
+			i += 1294;
+		}
+		
+		if (self != top)
+		{
+			html2canvas($("#divBooking"), {
+				onrendered: function(canvas) {
+					var i = window.top.document.createElement("IMG");
+					var data = canvas.toDataURL('image/png');
+					i.src = data;
+					i.id = "pdfView";
+					window.top.document.getElementById("bodyContent").appendChild(i);
+					//window.top.document.body.innerHTML = "";
+					//$("body").append("<img src='" + SanitizeAttr(canvas.toDataURL('image/jpeg',1.0)) + "'/>");
+					//window.top.document.body.appendChild(canvas);
+				}
+			});
+			return;
+		}
+		
+		$("#divBooking").hide();
+		$("#divBooking").before($("#ajaxOverlay").clone(true,true).show().css({"opacity":"100"}));
+		var iframe = $("<iframe name='pdfFrame' style='width:1000px;height:500px;margin-top:2000px' src='" + SanitizeAttr(window.location.href.replace("/pay","")) + "/print'></iframe>");
+		$("#bodyContent").append(iframe);
+		$("iframe[name='pdfFrame']").contents().find("#btnPDF").trigger('click');
+		
+		var check = setInterval(function()
+		{
+			if ($("#pdfView").length > 0 && $("#pdfView").width() == 1000)
+			{
+				clearInterval(check);
+				
+				var h = $("#pdfView").height();
+				var w = $("#pdfView").width();
+				var p = w / 612;
+				
+				var doc = new PDFDocument();
+				var stream = doc.pipe(blobStream());
+				for (var i=-37; i<h/p; i+=792)
+				{
+					doc.image($("#pdfView").attr("src"),-1,-i,{width:612,height:h/p});
+					if (i+792<h/p)
+						doc.addPage();
+				}
+				doc.end();
+				stream.on('finish', function()
+				{
+					window.location.href = stream.toBlobURL('application/pdf');
+				});
+			}
+		},200);
+	}
+</script>

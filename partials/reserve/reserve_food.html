@@ -1,0 +1,168 @@
+<div class='container'>
+	<div class='panel'>
+		<!-- <div id='reservationTitle' style='text-align:center'></div> -->
+		<div class='reservationmenus panel panel-body'>
+			<legend>Select Food &amp; Beverages For Your Event</legend>
+		</div>
+		<div class='reservationSubTotal text-center'>Subtotal: </div>
+		<div class='clearfix'></div>
+		<button class='btn btn-lg btn-primary pull-left' style='margin:10px auto auto 5%;width:100px' name='buttonReservationAddons' >Back</button>
+		<button class='btn btn-lg btn-primary pull-right' style='margin:10px 5% auto auto;width:100px' name='buttonReservationNext' >Next</button>
+		<div class='clearfix'></div>
+	</div>
+</div>
+<script>	
+    
+    if ( $("div").hasClass( "avail_selected" ) ) {
+		// alert("3"); 
+    }
+ 
+	
+	$("[name=buttonReservationAddons]").off("click").click(function (event)
+	{
+		event.preventDefault();
+		var errors = ValidateMenuQuantities();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid menu item quantities specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			UpdateBookingArrayMenus(booking);
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{
+				RouteReservationRequest("addons");
+			});
+        }
+    });
+	
+	$("[name=buttonReservationNext]").off("click").on("click", function(event)
+	{
+		event.preventDefault();
+		var errors = ValidateMenuQuantities();
+		
+		if (errors.length > 0)
+		{
+			$("#mainModalHeader").empty().append("Invalid menu item quantities specified");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<div class='alert alert-danger'><ul></ul></div>");
+			for (var i = 0; i < errors.length; i++)
+			{
+				$("#mainModalBody").find("ul").first().append("<li>" + errors[i] + "</li>");
+            }
+            $("#mainModal").modal("show");
+			 
+			$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+		}
+		else
+		{
+			UpdateBookingArrayMenus(booking);
+			var data = {method:'fSetSessionBooking',booking:booking};
+			Post(data).then(function($data)
+			{				
+				var page = "personnel";
+				if (booking['functionality']['personnel'] != 1)
+				{
+					page = "info";
+                }
+				RouteReservationRequest(page);
+			});
+		}
+	});
+	
+	var booking = null;
+	var data = {method:'fGetSessionBooking'};
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success")
+			booking = $data['data'];
+			
+		if (booking == null || booking['resources'].length < 1)
+		{
+			$("div.bookHeader").css({'min-height':'30px'});
+			$("div.reservationmenus").append("<div class='alert alert-danger'>Your saved booking data was invalid, or expired, please start a new reservation</div>");
+			$("button[name^='buttonReservation']").css({"display":"none"});
+			$("#reservationSubTotal").css({"display":"none"});
+			$("h5").remove();
+		}
+		else
+		{	
+			InsertBookingNav(booking);
+			PopulateBookVenueData(booking);
+			$("#reservationTitle").empty().append("<h3>Reservation #" + booking['id'] + " for " + booking['name'] + "</h3>");
+			
+			var start = booking['resources'][0]['start'];
+			var stop = booking['resources'][0]['stop'];
+				
+			for (var i = 0; i < booking['resources'].length; i++)
+			{
+				if (booking['resources'][i]['start'] < start)
+					start = booking['resources'][i]['start'];
+				if (booking['resources'][i]['stop'] > stop)
+					stop = booking['resources'][i]['stop'];
+			}
+			var arr = {
+				venueid: booking['venueid'],
+				start: start,
+				stop: stop
+			};
+			console.log("arr",arr);
+			var data = {
+				method:'fGetReservationMenus',
+				venueid: booking['venueid'],
+				start: start,
+				stop: stop
+			};
+			Post(data).then(function($data)
+			{
+				if ($data['result'] != "success")
+					return;
+					
+				var menus = $data['data'];
+				
+				if (menus.length < 1)
+				{
+					$("div.reservationmenus").append("No food &amp; drink menus are available during the time of your reservation");
+					/*
+					if (document.referrer.indexOf("/personnel") > 0)
+						$("button[name='buttonReservationAddons']").trigger("click");
+					else $("button[name='buttonReservationNext']").trigger("click");
+					*/
+				}
+					
+				AddReservationMenus(menus, booking);
+			});
+		}
+	});
+		
+    function ValidateMenuQuantities()
+	{
+		var errors = [];
+			
+		$(".reservationMenuItem").each(function()
+		{
+			var min = parseInt($(this).attr("data-min"));
+			var max = parseInt($(this).attr("data-max"));
+			var quantity = parseInt($(this).find("input.reservationMenuItemQuantity").first().val());
+			if (!quantity)
+				quantity = 0;
+			if (quantity != 0 && (quantity < min || quantity > max))
+				errors.push("You must specify a quantity between " + min + " and " + max + " for '" + $(this).find(".reservationMenuItemTitle").first().text() + "'");
+		});
+		
+		return errors;
+    }
+</script>

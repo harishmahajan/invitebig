@@ -1,0 +1,94 @@
+<div id='newAddonLocked' class='alert alert-danger' style='display:none'>Certain attributes of addons cannot be changed after they are created, you must delete the addon and create a new one if you want to change certain fields.  Please keep in mind that any bookings which have already booked this addon will be affected by any changes you make to this addon.</div>
+<div id='newAddonError' class='alert alert-danger' style='display:none'></div>
+<div id='formAddNewAddon' class='form-horizontal' action='#'>
+	<input type='hidden' id='newAddonID' value=''>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Addon Name</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newAddonName' placeholder='Name of the Addon'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Addon Type</label>
+		<div class='col-md-9'>
+			<select id='newAddonType'>
+			</select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Description</label>
+		<div class='col-md-9'>
+			<textarea class='form-control' style='width:100%;height:200px' id='newAddonDescription' maxlength=2000 placeholder='Describe this addon for people that are interested in paying for it'></textarea>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Pictures <small><em>(Limit 2)</em></small></label>
+		<div class='col-md-9'>
+			<form name='fileupload' method='POST' enctype='multipart/form-data' action='#' class='col-md-12'>
+				<div id='newAddonPictures' class='row pictures' style='margin-top:20px' data-limit='2'></div>
+				<div class='row fileupload-buttonbar'>
+					<div class='col-md-11'>
+						<span class='btn btn-primary fileinput-button'>
+							<i class='glyphicon glyphicon-plus glyphicon-white'></i>
+							<span>Add files...</span>
+							<input type='file' name='files[]' multiple>
+						</span>
+					</div>
+				</div>
+				<table role='presentation' class='table table-striped' style='width:100%'><tbody class='files' data-toggle='modal-gallery' data-target='#modal-gallery'></tbody></table>
+			</form>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Minimum Order</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newAddonMinimum' value='0'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Maximum Order</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newAddonMaximum' value='100'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Scheduled delivery allowed</label>
+		<div class='col-md-9'>
+			<input type='checkbox' id='newAddonDeliver'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Price per Item</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newAddonPrice'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Deposit Policy</label>
+		<div class='col-md-9'>
+			<select id='selectDepositList'></select>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Refund Policy</label>
+		<div class='col-md-9'>
+			<select id='selectRefundList'></select>
+		</div>
+	</div>
+	<div class='form-group' id='fgHours'>
+		<label class='col-md-3 control-label'>Availability</label>
+		<div class='col-md-9'>
+			<table class='timeslot-widget dtable'>
+				<thead><tr><th>Days of the week</th><th>Start Time</th><th>End Time</th><th></th></tr></thead>
+				<tbody></tbody>
+				<tfoot><tr><td colspan=10><button class='btn btn-xs btn-primary tsAdd'>Add New Timeslot</button><button class='btn btn-xs btn-default ts24x7'>Add 24x7 Timeslot</button></td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	
+	$("table.timeslot-widget").each(function(){$(this).tsWidget();});
+	
+</script>

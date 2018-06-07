@@ -1,0 +1,259 @@
+<div class='panel'>
+	<div class='panel-body panelSubscription' style='margin:0 auto 10px auto'>
+		<legend id='legendPlans'>InviteBIG Subscription Plan</legend>
+	</div>
+</div>
+
+<script>
+
+$("#ajaxOverlay").show().animate({opacity:100},10000);
+	//alert(localStorage.getItem('activeProfile'));
+var data = {
+	method: 'fGetVenueSubscription',
+	venueid: localStorage.getItem('activeProfile')
+};
+Post(data).then(function($data)
+{
+	if ($data['result'] == "success")
+	{
+		//// build and insert first table to show plan information
+		var table = "<table class='table table-condensed ptable'><thead><tr><th>Plan Name</th><th>Auto-Renews On</th><th>Cost</th><th>Action</th></thead><tbody>";
+		table += "<tr><td>" + $data['data']['plan'] + "</td><td>" + FormatDate($data['data']['renews'], "MMMM D, YYYY", localStorage.getItem("timezone")) + 
+			"</td><td>" + FormatDollars($data['data']['cost']/100,"USD") + "</td><td><button id='changePlan' class='btn btn-sm btn-primary'>Change Plan</button><button id='cancelPlan' class='btn btn-sm btn-default'>Cancel Plan</button></td></tr>";
+		table += "</tbody></table>";
+		table = $(table);
+			//alert($data['data']['status']);
+		if ($data['data']['status'] == "canceled")
+		{
+			table.find("tr td:nth-child(2)").empty().append("Expired");
+			//$(".panelSubscription").before("<div class='alert alert-danger'>Your subscription plan has expired and your venue account is restricted. Choose a subscription plan to regain full account functionality.</div>");
+		}
+		
+		if ($data['data']['status'] == "past_due" || $data['data']['status'] == "unpaid")
+		{
+			table.find("tr td:nth-child(2)").empty().append("Expired");
+			//$(".panelSubscription").before("<div class='alert alert-danger'>Your account is past due, please update your payment method as soon as possible. Your account will be restricted if it is not in good standing by " + FormatDate($data['data']['deactivates'], "MMMM D, YYYY", localStorage.getItem("timezone")) + ".</div>");
+		}
+		
+		if ($data['data']['status'] == "trialing")
+		{
+			table.find("tr th:nth-child(2)").empty().append("Billing Begins On");
+			//$(".panelSubscription").before("<div class='alert alert-info'>Your trial period ends on " + FormatDate($data['data']['renews'], "MMMM D, YYYY", localStorage.getItem("timezone")) + ", you will be automatically billed at that time for the next month's service</div>");
+		}
+		
+		if ($data['data']['cancelsatend'])
+		{
+			table.find("tr th:nth-child(2)").empty().append("Ends On");
+			table.find("tr td:nth-child(2)").append("<br><small><em>Will not auto-renew</em></small>").css({"color":"red"});
+			table.find("#cancelPlan").remove();
+			table.find("#changePlan").empty().append("Choose Plan");
+		}
+			
+		if ($data['data']['discounted'])
+			table.find("tr td:nth-child(3)").empty().append("<div style='display:inline-block;text-decoration:line-through'>" + FormatDollars($data['data']['cost']/100,"USD") + "</div>&nbsp;&nbsp;" + FormatDollars($data['data']['discounted']/100,"USD") + "<br><small><em>You get a discount!</em></small>");
+		$("#legendPlans").after(table);
+		
+		//// build and insert second and third tables to show credit card information, only if a plan has been subscribed
+		var ctable = "<table class='table table-condensed ptable'><thead><tr><th>Funding Source</th><th>Expiration</th><th>Email</th><th>Action</th></tr></thead><tbody>";
+		var cbtns = "<button id='updateCard' class='btn btn-sm btn-primary'>Change Credit Card</button>";
+		
+		if ($data['data']['balance'])
+			ctable += "<tr><td>Account Credit: " + FormatDollars(-1*$data['data']['balance']/100,"USD") + "</td><td></td><td></td></tr>";
+			
+		if ($data['data']['last4'])
+			ctable += "<tr><td>" + $data['data']['brand'] + " ..." + $data['data']['last4'] + "</td><td>" + $data['data']['exp'] + "</td><td>" + $data['data']['email'] + "</td><td>" + cbtns + "</td></tr>";
+		else
+		{
+			ctable += "<tr><td colspan=3><div class='alert alert-warning'>No credit card has been provided, add a credit card to ensure continued account functionality</div></td><td>" + cbtns + "</td></tr>";
+		}
+			
+		ctable += "</tbody></table>";
+		$(".panelSubscription").append("<legend id='legendCards' style='margin-top:50px'>Payment Methods</legend>");
+		
+		if ($data['data']['history'] && $data['data']['history'].length > 0)
+		{
+			$(".panelSubscription").append("<legend id='legendHistory' style='margin-top:50px'>Invoice History</legend>");
+			var htable = "<table class='table table-condensed ptable'><thead><tr><th>Invoice Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody>";
+			
+			for (var i=0; i<$data['data']['history'].length; i++)
+			{
+				htable += "<tr><td>" + FormatDate($data['data']['history'][i]['date'], "MMMM D, YYYY h:mma", localStorage.getItem("timezone")) + "</td><td>";
+				
+				if ($data['data']['history'][i]['lines'].length > 1 || $data['data']['history'][i]['discount'])
+				{
+					htable += "<div class='subheading'>Invoice Details</div><table class='venueInvoiceDetails'><tbody>";
+					for (var i2=0; i2<$data['data']['history'][i]['lines'].length; i2++)
+					{
+						$line = $data['data']['history'][i]['lines'][i2];
+						htable += "<tr><td>" + $line['description'] + "</td><td>" + FormatDollars($line['amount']/100,"USD") + "</tr>";
+					}
+					
+					if ($data['data']['history'][i]['discount'])
+						htable += "<tr><td>Service Discount</td><td>" + FormatDollars($data['data']['history'][i]['discount']/100,"USD") + "</td></tr>";
+
+						htable += "</tbody></table>";
+				}
+				else htable += $data['data']['history'][i]['lines'][0]['description'];
+				
+				htable += "</td><td>" + FormatDollars($data['data']['history'][i]['amount']/100,"USD") + "</td><td>" + $data['data']['history'][i]['status']
+				if ($data['data']['history'][i]['status'] == "Paid")
+				{
+					if (!$data['data']['history'][i]['charge'])
+						htable += " with account credit";
+					else
+					{
+						if ($data['data']['history'][i]['charge']['amount'] >= $data['data']['history'][i]['amount'])
+							htable += " with credit card " + $data['data']['history'][i]['charge']['last4'];
+						else
+						{
+							var source = "";
+							if ($data['data']['history'][i]['charge']['source'] == "credit")
+								source = "credit card (" + $data['data']['history'][i]['charge']['last4'] + ")";
+							else source = "account credit";
+							htable += "<div class='charged'>" + FormatDollars($data['data']['history'][i]['charge']['amount']/100,"USD") + " paid with " + source + "</div>";
+							
+							if ($data['data']['history'][i]['charge']['amount'] < $data['data']['history'][i]['amount'])
+								htable += "<div class='charged'>" + FormatDollars(($data['data']['history'][i]['amount'] - $data['data']['history'][i]['charge']['amount'])/100,"USD") + " paid with account credit</div>";
+						}
+					}
+				}
+				htable += "</td></tr>";
+			}
+			htable += "</tbody></table>";
+			
+			$("#legendHistory").after(htable);
+		}
+		
+		$("#legendCards").after(ctable);
+
+		if ($data['data']['status'] == "past_due" || $data['data']['status'] == "unpaid")
+		{
+			$(".panelSubscription table:last").find("tr td").css({"background-color":"#f2dede"})
+		}
+		
+		function GetCardForPlan($plan,$planid,$desc)
+		{
+			$.getScript('https://checkout.stripe.com/v2/checkout.js',function()
+			{				
+				var token = function(res)
+				{
+					var data = {
+						method: 'fSetVenueSubscription',
+						venueid: localStorage.getItem("activeProfile"),
+						planid: $planid,
+						email: res.email,
+						token: res.id
+					};
+					Post(data).then(function($data)
+					{
+						GetDashboardPane();
+					});
+					
+				};
+				StripeCheckout.open({
+					key:         'pk_live_bqrhEtEGEZ9pLTy5zS1gEBLY',
+					address:     false,
+					//amount:      $cost * 100,
+					currency:    'usd',
+					name:        $plan,
+					description: (typeof $desc === 'undefined' ? '' : $desc),
+					panelLabel:  ($planid=='dontset'?'Update':'Subscribe'),
+					token:       token
+				});
+			});
+		}
+		
+		//// bind to buttons and handle click events
+		$("#updateCard").on('click',function(event)
+		{
+			GetCardForPlan('Update Credit Card','dontset');
+		});
+		
+		$("#changePlan").on('click',function(event)
+		{
+			$("#mainModalHeader").empty().append("Choose your plan");
+			$("#mainModalAcceptBtn").empty().append("Save Change").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+			LoadPartial("/dashboard/venue-subscription-plans.html","mainModalBody").done(function()
+			{
+				$("#mainModal").modal("show");
+				$("#mainModalCloseBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+				$("#mainModalAcceptBtn").off("click").click(function(event)
+				{
+					if ($(".planChoice.active").length > 0)
+					{
+						var plan = $(".planChoice.active").attr("data-plan");
+						var planid = $(".planChoice.active").attr("data-planid");
+						var cost = $(".planChoice.active").attr("data-cost");
+						
+						if (!$data['data']['last4'])
+							GetCardForPlan(plan,planid,cost);
+						else 
+						{
+							var data = {
+								method: 'fSetVenueSubscription',
+								venueid: localStorage.getItem("activeProfile"),
+								planid: planid,
+								email: '',
+								token: ''
+							};
+							Post(data).then(function($data)
+							{
+								AuthPing().then(function()
+								{
+									GetDashboardPane();
+								});
+							});
+						}
+					}
+					
+					$("#mainModalBody").empty();
+					$("#mainModal").modal("hide");
+				});
+			});
+		});
+		
+		$("#cancelPlan").on('click',function(event)
+		{
+			$("#mainModalHeader").empty().append("Are you sure you want to cancel your subscription plan?");
+			$("#mainModalAcceptBtn").empty().append("Keep Plan").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Cancel Plan").css({"display":"inline"});
+			$("#mainModalBody").empty().append("If you cancel our subscription plan then it will not auto-renew, however your account will remain active until the end of your current subscription. After your current subscription ends your venue account will be restricted.<br><br><textarea id='cancelReason' class='form-control' style='height:60px' placeholder='Please tell us why you are cancelling'></textarea><br>");
+			$("#mainModal").modal("show");
+			$("#mainModalAcceptBtn").off("click").click(function(event){$("#mainModalBody").empty();$("#mainModal").modal("hide");});
+			$("#mainModalCloseBtn").off("click").click(function(event)
+			{
+				event.preventDefault();
+				if ($("#cancelReason").val().length < 3)
+				{
+					$("#cancelReason").css({"border-color":"#F88"});
+					event.stopPropagation();
+				}
+				else
+				{
+					var data = {
+						method: 'fCancelVenueSubscription',
+						venueid: localStorage.getItem("activeProfile"),
+						reason: $("#cancelReason").val()
+					};
+					Post(data).then(function($data)
+					{
+						GetDashboardPane();
+					});
+					$("#mainModalBody").empty();
+					$("#mainModal").modal("hide");
+				}
+			});
+		});
+	}
+	else
+	{
+		$(".panelSubscription").empty().append("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+	}
+});
+
+$(function()
+{
+});
+
+</script>

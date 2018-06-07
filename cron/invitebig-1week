@@ -1,0 +1,6 @@
+#!/bin/bash
+
+F=$(ls -b1t /home/backup/*-daily-*.tgz | head -1)
+N=$(echo $F | sed 's/-daily-/-weekly-/g')
+mv $F $N
+find /home/backup/invitebig-weekly-*.tgz -mmin +80640 -exec rm {} \;

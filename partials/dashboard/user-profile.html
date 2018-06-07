@@ -1,0 +1,320 @@
+<div class='panel'>
+	<div class='panel-body'>
+		<form id='formUpdateUserProfile' class='form-horizontal' action='/action.php'>
+			<input type='hidden' name='functionUpdateUserProfile' value='me'>
+			<input type='hidden' name='sig' value='1'>
+			<legend>My Profile Information</legend>
+			<div class='formpan'>
+				<div class='form-group form-group-alt1'>
+					<label>Email Address</label>
+					<input type='text' id='updateUserEmail' class='form-control'>
+				</div>
+				<div class='form-group form-group-alt2'>
+					<label>Birth Date</label>
+					<input type='text' id='updateUserBirthdate' class='form-control'>
+				</div>
+				<div class='form-group form-group-alt1'>
+					<label>First Name</label>
+					<input type='text' id='updateUserFirstName' class='form-control'>
+				</div>
+				<div class='form-group form-group-alt2'>
+					<label>Last Name</label>
+					<input type='text' id='updateUserLastName' class='form-control'>
+				</div>
+				<div class='form-group form-group-alt1'>
+					<label>Phone Number</label>
+					<input type='text' id='updateUserPhone' class='form-control'>
+				</div>
+				<div class='form-group form-group-alt2'>
+					<label>Timezone</label>
+					<input type='text' id='changeTimezone' class='form-control' placeholder='Click to set'>
+				</div>
+				<div class='form-group form-group-alt1'>
+					<label>Password</label>
+					<input type='password' id='updateUserPassword1' class='form-control'>
+				</div>
+				<div class='form-group form-group-alt2'>
+					<label>Confirm Password</label>
+					<input type='password' id='updateUserPassword2' class='form-control'>
+				</div>
+				<div class='clearfix'></div>
+				<br>
+				<input type='checkbox' id='updateUserPromotions'> Receive e-mails about special offers
+				<br><br><br>
+				<button id='updateSubmit' class='btn btn-success btn-lg'>Update My Profile</button>
+			</div>
+			<!-- <div class='row'>
+				<div class='col-md-12'>
+					<div class='form-group'>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Email Address</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-user'></i></span>
+								<input type='text' class='form-control' id='updateUserEmail' placeholder='Email' disabled>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>First Name</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-user'></i></span>
+								<input type='text' class='form-control' id='updateUserFirstName' placeholder='First Name'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Last Name</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-user'></i></span>
+								<input type='text' class='form-control' id='updateUserLastName' placeholder='Last Name'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Birth Date</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='fa fa-calendar'></i></span>
+								<input type='text' class='form-control' id='updateUserBirthdate' placeholder='Click to set'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Phone Number</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-th'></i></span>
+								<input type='text' class='form-control' id='updateUserPhone' placeholder='123-123-1234'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Timezone</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-globe'></i></span>
+								<input id='changeTimezone' type='text' style='max-width:250px; width:100%;' class='form-control' id='updateUserTimezone' placeholder='Click to set'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Password</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='fa fa-lock'></i></span>
+								<input type='password' class='form-control' id='updateUserPassword1' placeholder='Password'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Confirm Password</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='fa fa-lock'></i></span>
+								<input type='password' class='form-control' id='updateUserPassword2' placeholder='Password'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'>Receive e-mails about special offers</label>
+						<div class='col-md-6 col-xs-8'>
+							<div class='input-group'>
+								<input type='checkbox' id='updateUserPromotions'>
+							</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-lg-2 col-xs-4 control-label'></label>
+						<div class='col-md-6 col-xs-8'>
+							<button id='updateSubmit' class='btn btn-primary btn-lg'>Update My Profile</button>
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+		</form>
+	</div>
+</div>
+
+<script>
+
+if (localStorage.getItem("email"))
+	$("#updateUserEmail").attr("placeholder",localStorage.getItem("email"));
+if (localStorage.getItem("firstname"))
+	$("#updateUserFirstName").val(localStorage.getItem("firstname"));
+if (localStorage.getItem("lastname"))
+	$("#updateUserLastName").val(localStorage.getItem("lastname"));
+if (localStorage.getItem("phone"))
+	$("#updateUserPhone").val(localStorage.getItem("phone"));
+if (localStorage.getItem("birthdate"))
+{
+	var bday = moment(new Date(localStorage.getItem("birthdate")),"YYYY-MM-DD");
+	$("#updateUserBirthdate").val(bday.format("MMMM DD, YYYY"));
+}
+if (localStorage.getItem("timezone"))
+	$("#changeTimezone").val(localStorage.getItem("timezone"));
+if (localStorage.getItem("promotions"))
+	$("#updateUserPromotions").prop("checked",(localStorage.getItem("promotions") == 0 ? 0 : 1));
+if (localStorage.getItem("ssoUser") && localStorage.getItem("ssoUser") == 1)
+	$("#updateUserPassword1,#updateUserPassword2").parents("div.form-group").hide();
+
+$("#changeTimezone").click(function(event)
+{
+	event.preventDefault();
+	$("#mainModalHeader").empty().append("Choose your Timezone");
+	$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+	$("#mainModalCloseBtn").empty().append("Cancel").css({"display":"inline"});
+	$("#mainModalBody").empty().append("<iframe id='iframeTimezone' src='/inc/timezonepicker-master/index.php' style='width:100%;height:350px;border:none;scrolling:no'></iframe>");
+	$("#mainModal").modal("show");
+	$("#mainModalAcceptBtn").off("click").on('click',function(event)
+	{
+		event.preventDefault();
+		$("#changeTimezone").val($("#iframeTimezone").contents().find('#edit-date-default-timezone').val());
+		$("#mainModal").modal("hide");
+	});
+});
+
+/* JQUERY-UI */
+$("#updateUserBirthdate").datepicker(
+{
+	inline: true,
+	changeMonth: true,
+	changeYear: true,
+	yearRange: "-100:+0",
+	dateFormat: 'MM d, yy'
+});
+
+$("#updateSubmit").on('click',function(event) 
+{
+	event.preventDefault();
+	$("div.validationError").remove();
+	
+	if (!ValidateProfileUpdate())
+	{
+		$("html, body").animate({ scrollTop: 0 });
+		return;
+	}
+		
+	var data = {
+		method: 	'fUpdateUserProfile',
+		email:		$("#updateUserEmail").val(),
+		password:	$("#updateUserPassword1").val(),
+		birthdate:	$("#updateUserBirthdate").val(),
+		phone:		$("#updateUserPhone").val(),
+		timezone:	$("#changeTimezone").val(),
+		firstname:	$("#updateUserFirstName").val(),
+		lastname:	$("#updateUserLastName").val(),
+		promotions:	($("#updateUserPromotions").prop("checked") ? 1 : 0)		
+	};
+	Post(data).then(function($data)
+	{
+		if ($data['result'] == "success") 
+		{
+			if ($data['email'])
+				localStorage.setItem("email",$data['email']);
+			if ($data['ssoUser'])
+				localStorage.setItem("ssoUser",$data['ssoUser']);
+			if ($data['firstname'])
+				localStorage.setItem("firstname",$data['firstname']);
+			if ($data['lastname'])
+				localStorage.setItem("lastname",$data['lastname']);
+			if ($data['phone'])
+				localStorage.setItem("phone",$data['phone']);
+			if ($data['birthdate'])
+				localStorage.setItem("birthdate",$data['birthdate']);
+			if ($data['timezone'])
+				localStorage.setItem("timezone",$data['timezone']);
+			if ($data['promotions'])
+				localStorage.setItem("promotions",$data['promotions']);
+			if ($data['venueRights'])
+				localStorage.setItem("venueRights",JSON.stringify($data['venueRights']));
+			
+			$("#mainModalHeader").empty().append("Profile Updated");
+			$("#mainModalAcceptBtn").empty().append("OK").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("OK").css({"display":"none"});
+			$("#mainModalBody").empty().append("You have successfully updated your profile.");
+			$("#mainModal").modal("show");
+			$("#mainModalAcceptBtn").off("click").click(function(event) { $("#mainModal").modal("hide"); location.reload(); });
+		} else 
+		{
+			$("#formUpdateUserProfile").prepend("<div class='validationError alert alert-danger'>" + $data['result'] + "</div>");
+			$("html, body").animate({ scrollTop: 0 });
+		}		
+	});
+});
+
+function ValidateProfileUpdate()
+{
+	$(".validationError").each(function()
+	{
+		$(this).parent("div.form-group").removeClass("alert alert-danger");
+		$(this).remove();
+	});
+	
+	var error = false;
+	
+	if ($("#updateUserPassword1").val() != $("#updateUserPassword2").val())
+	{
+		var div = $("#updateUserPassword1").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Passwords do not match</span>");
+		error = true;
+	}
+	
+	if ($("#updateUserPassword1").val().length > 0 && $("#updateUserPassword1").val().length < 8)
+	{
+		var div = $("#updateUserPassword1").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Password must be at least 8 characters long and contain at least 1 number and at least 1 letter</span>");
+		error = true;
+	}
+	
+	if ($("#changeTimezone").val().length < 3)
+	{
+		var div = $("#changeTimezone").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Please choose a timezone</span>");
+		error = true;
+	}
+	
+	if ($("#updateUserBirthdate").val().length < 6)
+	{
+		var div = $("#updateUserBirthdate").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Invalid Date of Birth</span>");
+		error = true;
+	}
+	
+	if ($("#updateUserPhone").val().replace(/[^0-9]/g,'').length < 10)
+	{
+		var div = $("#updateUserPhone").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Invalid phone number provided, should be 10 digits</span>");
+		error = true;
+	}
+	
+	if ($("#updateUserFirstName").val().length < 2)
+	{
+		var div = $("#updateUserFirstName").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Please provide your first name</span>");
+		error = true;
+	}
+	
+	if ($("#updateUserLastName").val().length < 2)
+	{
+		var div = $("#updateUserLastName").parents("div.form-group").first();
+		div.addClass("alert alert-danger");
+		div.append("<span class='validationError'>Please provide your last name</span>");
+		error = true;
+	}
+	
+	if (error)
+		return false;
+	return true;
+}
+</script>

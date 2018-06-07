@@ -1,0 +1,453 @@
+<div class='container register' style='text-align:center;'>
+	<h1 style='text-align:center; font-weight: bold;margin-top:50px;color:rgb(25, 64, 75)'>Register For InviteBIG</h1>
+	<input type='hidden' id='registerFBID'>
+	<input type='hidden' id='registerGID'>
+	<input type='hidden' id='registerTWID'>
+	<input type='hidden' id='registerBirthdate'>
+	<input type='hidden' id='registerPhone'>
+	
+	<h4 style='text-align:center; color: #666; font-size:24px; margin-bottom:50px;'>With an event organizer account you can manage all of your InviteBIG bookings online</h4>
+	<div id='registerContent'>
+		<div class='emailL_RDiv'>
+			<form>
+				<div class='form-group'>
+					<input class='form-control nameInput' type='text' placeholder='Your Full Name'>
+					<span class='append fa fa-user'></span>
+				</div>
+				<div class='form-group'>
+					<input class='form-control emailInput' type='text' placeholder='Your Email'>
+					<span class='append fa fa-envelope'></span>
+				</div>
+				<div class='form-group'>
+					<input class='form-control passwordInput' type='password' placeholder='Set A Password'>
+					<span class='append fa fa-lock'></span>
+				</div>
+				<button class='form-control' id='submitRegister'>Start Your Free Trial</button>
+			</form>
+		</div>
+		<div class='orDiv'>
+			<hr class='topLine'>
+			<div class='or'>or</div>
+			<hr class='bottomLine'>
+		</div>
+		<div class='social_buttons'>
+			<div class='form-group'>
+				<button class='FBButton form-control'>
+					<i class='fa fa-facebook'></i>
+					Sign Up With Facebook
+				</button>
+			</div>
+			<div class='form-group'>
+				<button class='TWButton form-control'>
+					<i class='fa fa-twitter'></i>
+					Sign Up With Twitter
+				</button>
+			</div>
+			<div class='form-group'>
+				<button class='GButton form-control'>
+					<i class='fa fa-google-plus'></i>
+					Sign Up With Google
+				</button>
+			</div>
+		</div>
+		<div class='clearfix'></div>
+		<div class='linksHere'>
+			<a data-partial=true href="/forgot">Forgot Your Password?</a>
+			<p>Already have an account? 
+				<a data-partial=true href="/login">Sign In</a>
+			</p>
+			<p>Are you a venue? 
+				<a data-partial=true href="/register/venue">Start Your Free Trial</a>
+			</p>
+		</div>
+		<div class='placeCorrection' style='width:370px;display:inline-block'></div>
+	</div>
+</div>
+
+<script src='https://apis.google.com/js/client:platform.js'></script>
+<script src='https://connect.facebook.net/en_US/all.js'></script>
+
+<script type="text/javascript">
+
+	if (window.location.href.indexOf("/venue") > 0){
+		$(".register h1").empty().append("Start Your Free Trial");
+		$(".register h4").empty().append("No need to add a credit card - you have 14 days to explore for free.");
+		$(".linksHere p").last().remove();
+	}
+	
+	$(function()
+	{
+		if (!localStorage.getItem("email"))
+		{	
+
+			$(".TWButton").off("click").on("click",function(event)
+			{
+				event.preventDefault();
+				
+				$("#registerFBID").val("");
+				$("#registerGID").val("");
+				$("#registerTWID").val("");
+				
+				// do Twitter signin
+			});
+			
+			$(".GButton").off("click").on("click",function(event)
+			{
+				event.preventDefault();
+				
+				$("#registerFBID").val("");
+				$("#registerGID").val("");
+				$("#registerTWID").val("");
+				
+				gapi.auth.signIn({'callback':'googleRegisterCallback',
+					'clientid':'227544064140-dt97tnuqbv13unkhu29u1rsaq94n5srr.apps.googleusercontent.com',
+					'cookiepolicy':'single_host_origin',
+					'scope':'profile email',
+					'approvalprompt':'force',
+					'width':'iconOnly'
+				});
+			});
+
+			$(".FBButton").off("click").on("click",function(event)
+			{
+				event.preventDefault();
+				
+				$("#registerFBID").val("");
+				$("#registerGID").val("");
+				$("#registerTWID").val("");
+				
+				if (typeof FB === "undefined")
+					console.error("Google's gapi was not loaded!");
+				else
+				{
+					FB.init({
+						appId: '1414449968793433',
+						channelUrl: '//www.invitebig.com/channel.html',
+						status: true, // check login status
+						cookie: false, // enable cookies to allow the server to access the session
+						xfbml: true	// parse XFBML
+					});
+					FB.login(function(response) 
+					{
+						if (response.authResponse && response.authResponse.accessToken) 
+						{	
+							FB.api('/me', function(me)
+							{
+								console.log('facebook info', me)		
+								if (me.id)
+								{
+									$(".passwordInput").parents(".form-group").first().css({"display":"none"});
+									$(".fa-lock").css({"display":"none"});
+									$("#registerFBID").val(me.id);
+									if (me.email)
+										$(".emailInput").val(me.email);
+									
+									var fullName = "";
+									if (me.first_name)
+										fullName = me.first_name+' ';
+									if (me.last_name)
+										fullName += me.last_name;
+									$(".nameInput").val(fullName);
+									
+									if(me.birthday)
+									{
+										var d = new moment(new Date(me.birthday));
+										$("#registerBirthdate").val(d.format("MMMM D, YYYY"));
+									}
+								}
+							});
+						} else {
+							$("#registerContent div.alert.alert-danger").remove();
+							$("#registerContent").prepend("<div class='alert alert-danger'>Failed to connect to your facebook account!  <a data-partial=true href='/register2'>Retry</a></div>");
+						}
+					}, {scope: 'email,user_birthday'});
+				}
+			});
+
+			$("#submitRegister").on('click',function(event) 
+			{
+				event.preventDefault();
+				if (!ValidateRegistration())
+					return;
+
+				var names = $('.nameInput').val().split(" ");
+					
+				var data = {
+					method:'fRegister',
+					fbid: $("#registerFBID").val(),
+					gid: $("#registerGID").val(),
+					twid: $("#registerTWID").val(),
+					email: $(".emailInput").val(),
+					password: $(".passwordInput").val(),
+					timezone: moment.tz.guess(),
+					birthdate: moment(new Date($("#registerBirthdate").val())).format("YYYY-MM-DD"),
+					phone: $("#registerPhone").val(),
+					firstname: names[0],
+					lastname: names[1],
+					isvenue: (window.location.href.indexOf("/venue") > 0 ? 1 : 0)
+				};
+				
+				Post(data).then(function($data)
+				{				
+					if ($data['result'] == "success") 
+					{		
+						if (typeof heap !== "undefined")
+						{
+							heap.identify({
+								name: $('.nameInput').val(),
+								email: $(".emailInput").val()
+							});
+						}
+						
+						if (typeof __insp !== "undefined")
+						{
+							__insp.push(['identify', $(".emailInput").val()]);
+						}
+						
+						if (typeof window.__wtw_custom_user_data === "undefined")
+							window.__wtw_custom_user_data = {};
+						window.__wtw_custom_user_data.email = $(".emailInput").val();
+						window.__wtw_custom_user_data.name = $('.nameInput').val();
+						
+						if ($("#registerFBID").val() != ""){
+							FB.init({
+								appId: '1414449968793433',
+								channelUrl: '//www.invitebig.com/channel.html',
+								status: true, // check login status
+								cookie: false, // enable cookies to allow the server to access the session
+								xfbml: true	// parse XFBML
+							});
+							FB.login(function(response) 
+							{
+								if (response.authResponse && response.authResponse.accessToken) 
+								{
+									FB.api('/me', function(me)
+									{
+										if (me.id)
+										{
+											var data = {method:'fFBLogin',token:response.authResponse.accessToken};
+											Post(data).then(function($data,req){
+												loginDone($data,req)
+											});
+										}
+									});
+								}
+							});
+						}
+						else if ($("#registerGID").val() != ""){
+							if (typeof gapi !== "undefined" && typeof gapi.auth !== "undefined")
+							{
+								if ($("#gAccessToken").length > 0 && $("#gAccessToken").val().length > 0)
+								{
+									var data = {method:'fGLogin',token:$("#gAccessToken").val()};
+									Post(data).then(function($data,req){
+										loginDone($data,req);
+									});
+								}
+								else {
+									$("#registerContent div.alert.alert-danger").remove();
+									$("#registerContent").prepend("<div class='alert alert-danger'>Failed to connect to your Google+ account!</div>");
+								}
+							}
+						} else if ($("#registerTWID").val() != ""){
+							// do Twitter registration
+						} else {
+							var data = {
+								method:'fLogin',
+								email: $(".emailInput").val(),
+								password: $(".passwordInput").val()
+							};
+							
+							Post(data).then(function($data,req){
+								loginDone($data,req)
+							});
+						}
+							
+					} else 
+					{
+						$("#registerContent div.alert.alert-danger").remove();
+						$("#registerContent").prepend("<div class='validationError alert alert-danger'>" + $data['result'] + "</div>");
+					}
+				});
+			})
+		} else {
+			$("#registerContent").empty().prepend("<div class='alert alert-danger'>You are already logged in!</div>");
+		}
+	});
+	
+	function loginDone($data,req)
+	{
+		if ($data['result'] == "Must sign ToS")
+		{
+			$("#mainModalHeader").empty().append("InviteBIG Terms of Service");
+			$("#mainModalAcceptBtn").empty().append("I Agree").css({"display":"inline"});
+			$("#mainModalCloseBtn").empty().append("Don't Agree").css({"display":"inline"});
+			$("#mainModalBody").empty().append("<iframe style='width:100%;height:300px;border:1px solid #AAA;padding:5px' src='/partials/terms.html'></iframe><br><br>By clicking 'I Agree' below you are agreeing to the <a href='/terms'>Terms of Service</a> as well as the <a href='/privacy'>Privacy Policy</a>.");
+			$("#mainModal").modal("show");
+			
+			$("#mainModalAcceptBtn").off("click").click(function(event)
+			{
+				var data = {
+					method:'fSignContract',
+					contract:'tos'
+				};
+				Post(data).then(function($data)
+				{
+					if ($data['result'] == "success"){
+						// login again
+						req.auth = localStorage.getItem("auth");
+						Post(req).then(function($data,req2){
+							loginDone($data,req2)
+						});
+					}
+					else $("#mainModalBody").append("<br><div class='alert alert-danger'>There was an error while digitally signing this contract, please contact us for support.</div>");
+				});	
+			});
+			
+			$("#mainModalCloseBtn").off("click").click(function(event)
+			{
+				window.location.href = "/logout";
+				$("#mainModalBody").empty();$("#mainModal").modal("hide");
+			});
+		}
+		else ProcessLogin($data);
+	}
+
+	function ProcessLogin($data)
+	{
+		if ($data['result'] == "success") 
+		{
+			localStorage.clear();
+			if ($data['email'])
+				localStorage.setItem("email",$data['email']);
+			if ($data['ssoUser'])
+				localStorage.setItem("ssoUser",$data['ssoUser']);
+			if ($data['firstname'])
+				localStorage.setItem("firstname",$data['firstname']);
+			if ($data['lastname'])
+				localStorage.setItem("lastname",$data['lastname']);
+			if ($data['phone'])
+				localStorage.setItem("phone",$data['phone']);
+			if ($data['birthdate'])
+				localStorage.setItem("birthdate",$data['birthdate']);
+			if ($data['timezone'])
+				localStorage.setItem("timezone",$data['timezone']);
+			if ($data['promotions'])
+				localStorage.setItem("promotions",$data['promotions']);
+			if ($data['venueRights'])
+				localStorage.setItem("venueRights",JSON.stringify($data['venueRights']));
+			localStorage.setItem("activeProfile","me");
+			localStorage.setItem("lastDashboardAccount","me");
+			
+			if (typeof heap !== "undefined")
+			{
+				heap.identify({
+					name: $data['firstname'] + " " + $data['lastname'],
+					email: $data['email'],
+					phone: $data['phone']
+				});
+			}
+			
+			if (typeof BugSnag !== "undefined")
+			{
+				BugSnag.user = {
+					email: $data['email']
+				};
+			}
+			
+			if (typeof __insp !== "undefined")
+			{
+				__insp.push(['identify', $data['email']]);
+			}
+		
+			if (typeof window.__wtw_custom_user_data === "undefined")
+				window.__wtw_custom_user_data = {};
+			window.__wtw_custom_user_data.email = $data['email'];
+			window.__wtw_custom_user_data.name = $data['firstname'] + " " + $data['lastname'];
+			
+			// send to registration success page
+			if (window.location.href.indexOf("/venue") > 0)
+				window.location.href = "/create-venue";
+			else window.location.href = "/register-success";
+		} else {
+			$("#registerContent div.alert.alert-danger").remove();
+			$("#registerContent").prepend("<div class='alert alert-danger'>" + $data['result'] + "</div>");
+		}	
+	}
+
+	function ValidateRegistration()
+	{
+		$("#registerContent div.alert.alert-danger").remove();
+		
+		var error = false;
+		var msg = "";
+		if ($(".nameInput").val().indexOf(' ') < 0 || $(".nameInput").val().split(' ')[1].length < 2)
+		{
+			msg += "Please enter your full name. ";
+			error = true;
+		}
+		if ($(".emailInput").val().indexOf('@') < 0 || $(".emailInput").val().indexOf('.') < 0 || $(".emailInput").val().length < 6)
+		{
+			msg += "Provide a valid email address. ";
+			error = true;
+		}
+		if ($(".passwordInput:visible").length > 0 && ($(".passwordInput").val().length < 8 || 
+			!(/[a-zA-Z]/.test($(".passwordInput").val()) & /[0-9]/.test($(".passwordInput").val())) ))
+		{
+			msg += "Password must be at least 8 characters long and contain at least 1 number and at least 1 letter. ";
+			error = true;
+		}
+		
+		if (error){
+			$("#registerContent").prepend("<div class='alert alert-danger'>" + msg + "</div>");
+			return false;
+		}
+		return true;
+	}
+
+	function googleRegisterCallback(authResult)
+	{
+		console.log("authResult",authResult);
+		if (authResult['status']['method'] == "PROMPT")
+		{
+			if (authResult['status']['signed_in'])
+			{		
+				$.ajax({
+					type: "GET",
+					url: "https://www.googleapis.com/oauth2/v2/userinfo?access_token="+authResult['access_token']
+				})
+				.done(function(data){
+					$(".emailInput").val(data.email);					
+					$("#registerGID").val(data.id);
+					$(".passwordInput").parents(".form-group").first().css({"display":"none"});
+					
+					var fullname = "";
+					if (data.given_name)
+						fullname = data.given_name + ' ';
+					if (data.family_name)
+						fullname += data.family_name;
+					$(".nameInput").val(fullname);
+					
+					$.ajax({
+						type: "GET",
+						url: "https://www.googleapis.com/plus/v1/people/"+data.id+"?access_token="+authResult['access_token']
+					}).done(function(data){
+						console.log("Google+ GET",data);
+						if (data.birthday){
+							var m = moment(new Date(data.birthday),"YYYY-MM-DD");
+							if (m.year() > 1900)
+								$("#registerBirthdate").val(m.format("MMMM D, YYYY"));
+						}
+					});
+					
+					$("#gAccessToken").remove();
+					$("#registerGID").after("<input id='gAccessToken' type='hidden' value='" + authResult['access_token'] + "'>");
+				});
+			} else {
+				$("#registerContent div.alert.alert-danger").remove();
+				$("#registerContent").prepend("<div class='alert alert-danger'>Failed to connect to your Google+ account!  <a data-partial=true href='/register2'>Retry</a></div>");
+			}
+        }
+    }
+	
+</script>

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+## This will clear the prerender cache by cycling the service, deleting the levelDB cache, and recaching th$
+/etc/init.d/prerender restart
+curl --retry 10 -m 1 -k -f -A "RefreshCache" $(</var/www/invitebig/prerender.txt) > /dev/null

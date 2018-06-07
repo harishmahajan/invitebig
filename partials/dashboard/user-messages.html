@@ -1,0 +1,21 @@
+<div class='panel'>
+	<div class='panel-body'>
+		<legend>My Conversations</legend>
+		<table id='tableMessages' class='table table-hover table-condensed table-messages dtable'>
+			<button id='btnCreateNewMessage' class='btn btn-default btn-primary' style='margin-bottom:20px' title='Compose new message'><i class='glyphicon glyphicon-envelope'></i> New Conversation</button>
+			<br>
+			<thead><tr><th><button id='btnDeleteMessages' class='btn btn-xs btn-danger' title='Delete selected messages' style='margin-right:5px'><i class='glyphicon glyphicon-trash'></i> <small>Del</small></button></th><th>Name</th><th>Subject</th><th class='no-display-mob'>Last Update</th></tr></thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+<script>
+	GetMyMessages();
+	
+	$("#btnCreateNewMessage").off('click').on('click',function(event)
+	{
+		event.preventDefault();
+		CreateNewMessage()
+	});
+	
+</script>

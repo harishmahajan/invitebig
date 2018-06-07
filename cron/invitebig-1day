@@ -1,0 +1,18 @@
+#!/bin/bash
+
+curl -k -f http://127.0.0.1/action.php?fCleanupPictures=1
+curl -k -f http://127.0.0.1/action.php?fSyncStripePlans=1
+curl -k -f http://127.0.0.1/sitemap_gen.php
+curl -k -f http://www.google.com/webmasters/sitemaps/ping?sitemap=/sitemap.xml
+curl -k -f http://www.bing.com/ping?siteMap=http%3A%2F%2Fwww.invitebig.com%2Fsitemap.xml
+curl -k -f http://www.google.com/webmasters/sitemaps/ping?sitemap=/sitemap.xml
+curl -k -f http://www.bing.com/ping?siteMap=http%3A%2F%2F//static.invitebig.com%2Fsitemap.xml
+
+## This will refresh the prerender cache
+/etc/init.d/prerender restart
+curl --retry 5 -m 1 -k -f -A "RefreshCache" $(</var/www/invitebig/prerender.txt)
+
+F=$(ls -b1t /home/backup/invitebig-hourly-*.tgz | head -1)
+N=$(echo $F | sed 's/-hourly-/-daily-/g')
+mv $F $N
+find /home/backup/invitebig-daily-*.tgz -mmin +10080 -exec rm {} \;

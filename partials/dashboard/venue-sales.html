@@ -1,0 +1,72 @@
+<div class='panel panelSales'>
+	<div class='panel-body' style='margin:0 auto 10px auto'>
+		<legend id='legendSalesReporting'>
+			<div class='salesInputs pull-right'>
+				<b>Start Date:</b><input type='text' class='form-control' id='salesStartDate' placeholder='Start Date...'>
+				<b>Stop Date:</b><input type='text' class='form-control' id='salesStopDate' placeholder='Stop Date...'>
+				<button id='btnSalesReport' class='btn btn-md btn-primary'>Generate Report</button>
+			</div>
+			<div class='clearfix'></div>
+		</legend>
+		<div class='row salesHeader'>
+			<div class='col-md-4' style='color:#666'>
+			</div>
+			<div class='col-md-2'>
+			</div>
+			<div class='col-md-2'>
+			</div>
+			<div class='col-md-2'>
+			</div>
+			<div class='col-md-2'>
+			</div>
+		</div>
+		<table class='table table-striped table-hover table-condensed table-sales'>
+			<thead><tr><th>Date</th><th>Customer</th>
+			<th>Duration</th><th>Total Cost</th><th>Income</th><th>Status</th></tr></thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+var firstDay = new Date(y, m, 1);
+var lastDay = new Date(y, m + 1, 0);
+$("#salesStartDate").val(FormatDate(firstDay.getTime()/1000,"MMMM D, YYYY"));
+$("#salesStopDate").val(FormatDate(lastDay.getTime()/1000,"MMMM D, YYYY"));
+
+$(function()
+{
+	/* JQUERY-UI */		
+	$("#salesStartDate").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "-5:+5",
+		dateFormat: 'MM d, yy'
+	});
+
+	$("#salesStopDate").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "-5:+5",
+		dateFormat: 'MM d, yy'
+	});
+		
+	$("#btnSalesReport").off("click").click(function(event)
+	{
+		event.preventDefault();
+		$("table.table-sales tbody").empty();
+		$("table.table-sales").parent().find("div.alert").remove();
+		var startDate = (new Date($("#salesStartDate").val())).getTime() / 1000;
+		var stopDate = (new Date($("#salesStopDate").val())).getTime() / 1000;
+		GenerateSalesReport(startDate, stopDate);
+	});
+
+	$("#btnSalesReport").trigger("click");
+});
+
+</script>

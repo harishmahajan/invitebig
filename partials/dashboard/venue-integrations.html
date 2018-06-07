@@ -1,0 +1,392 @@
+<div class='panel-heading tab-bg-dark-navy-blue'>
+		<ul id='integrationTabs' class='nav nav-tabs nav-justified'>
+			<li class='active'><a href='#integrationWebsite' data-toggle='tab'>InviteBIG Website</a></li>
+			<li><a href='#integrationBookingImport' data-toggle='tab'>Booking Import</a></li>
+			<li><a href='#integrationCustomerExport' data-toggle='tab'>Customer Export</a></li>
+		</ul>
+	</div>
+	<div class='panel-body'>
+		<div class='tab-content'>
+			<div class='tab-pane active' id='integrationWebsite'>
+				<div class='panel'>
+					<div class='panel-body'>
+						<h3 style='margin-top:0'>Simple link to Venue Listing page</h3>
+						Third party websites may use a simple link to direct traffic to the Venue Listing page for any venue.  Here is an example:<br><br>
+						Example code: 
+<pre><code>Learn more about &lt;a href='https://www.invitebig.comDEMOLINK1URL'&gt;DEMOLINK1TEXT&lt;/a&gt;
+Check our rooms: &lt;a href='https://www.invitebig.comDEMOLINK1URL#resources'&gt;DEMOLINK1TEXT&lt;/a&gt;
+See food & drink &lt;a href='https://www.invitebig.comDEMOLINK1URL#food'&gt;DEMOLINK1TEXT&lt;/a&gt;</code></pre>
+						Example: <pre>Learn more about <a href='#' id='demoLink1'></a></pre>
+					</div>
+				</div>
+				<div class='panel'>
+					<div class='panel-body'>
+						<h3 style='margin-top:0'>Simple link to the booking process</h3>
+						Third party websites may use a simple link to direct traffic to the booking process for any venue.  Here is an example:<br><br>
+						
+						Example code: <pre><code>Click this link to &lt;a href='https://www.invitebig.comDEMOLINK2URL'&gt;Book Now&lt;/a&gt;</code></pre>
+						Example: <pre>Click this link to <a href='#' id='demoLink2'>Book Now</a></pre>
+					</div>
+				</div>
+				<div class='panel'>
+					<div class='panel-body'>
+						<h3 style='margin-top:0'>Popup IFrame</h3>
+						You may use InviteBIG's integration javascript file to bind to an anchor link on your site so that when the link is clicked an iframe will appear in a popup and allow users to complete the booking process without ever leaving your site.  To use this code simply add the "InviteBIG_Button" class to an &lt;A&gt; tag, set the "href" attribute, and load our integration file.  The javascript will bind to this button based on class name, so make sure you use the InviteBIG_Button class.  Here is an example A tag that is made to look like a button:<br><br>
+						Example code:<br>
+						<pre><code>&lt;a class='InviteBIG_Button' href='https://www.invitebig.comDEMOIFRAMEBUTTON1URL'&gt;BOOK NOW&lt;/a&gt;
+&lt;script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'&gt;&lt;/script&gt;
+&lt;script src='https://www.invitebig.com/inc/js/invitebig-integration.js'&gt;&lt;/script&gt;</code></pre>
+						<pre><code>.InviteBIG_Button {
+	padding:6px 12px;
+	margin:10px;
+	background:#F36328;
+	border-radius:4px;
+	border:none;
+	color:#FFF;
+	display:inline-block;
+	text-decoration:none;
+	text-align:center'
+}</code></pre>
+						Example: <br>
+						<pre><a class='InviteBIG_Button btn btn-primary' 
+	href='DEMOIFRAMEBUTTON1URL' 
+	style='padding:6px 12px; margin:10px; background:#F36328; border-radius:4px; border:none; color:#FFF; display:inline-block; text-decoration:none; text-align:center'
+>BOOK NOW</a></pre>
+					</div>
+				</div>
+				<div class='panel'>
+					<div class='panel-body'>
+						<h3 style='margin-top:0'>Embedded IFrame</h3>
+						You may use an embedded IFrame to display the booking process for your venue on your website.  Here is an example: 
+						<a href='/iframe_test.html'>iframe_test.html</a> <small>(Right click, save as)</small><br><br>
+						Example code: <pre><code  id="iframecode">&lt;iframe class='InviteBigIFrame' src='DEMOIFRAME1URL' style='width:100%;height:100%'&gt;&lt;/iframe&gt;</code></pre>
+						<!-- If desired, add this jQuery code after the iframe close tag to auto-resize the IFrame: <br><pre><code>&lt;script&gt;<br>setInterval(function(){
+			$("iframe.InviteBigIFrame").each(function(){
+				$(this).height($(this).get(0).contentWindow.document.body.scrollHeight);
+				$(this).width($(this).get(0).contentWindow.document.body.scrollWidth);
+			});
+		},1000);<br>&lt;/script&gt;</code></pre><br> -->
+				<br>
+		Display Header:
+		<input type="checkbox" id="displayHeader"><br>
+		
+						Example: <br>
+						<iframe id='demoIFrame1' src='' style='width:100%;height:500px'></iframe>
+
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class='tab-pane' id='integrationBookingImport'>
+				<div class='panel'>
+					<div class='panel-body'>
+						<h3 style='margin-top:0'>Booking Import Tool</h3>
+						If you would like to manually import a booking into InviteBIG's system for reporting purposes then you may use this form to do so.
+						<br><br>
+						<div id='bookingImportForm' class='formpan'>
+							<div class='row'>
+								<div class='col-md-6'>
+									<div class='form-group'>
+										<label>Event Name</label>
+										<input type='text' class='form-control' id='bookingImportName' placeholder='Optional...'>
+									</div>
+									<div class='form-group'>
+										<label>Event Start Date and Time</label>
+										<div class='clearfix'></div>
+										<input type='text' class='form-control' style='width:50%;float:left' id='bookingImportStartDate' placeholder='January 1, 1901'>
+										<input type='text' class='form-control timepicker' style='width:50%;float:left' id='bookingImportStartTime' placeholder='10:00am'>
+										<div class='clearfix'></div>
+									</div>
+									<div class='form-group'>
+										<label>Total Price</label>
+										<input type='text' class='form-control' id='bookingImportPrice'>
+									</div>
+									<div class='form-group'>
+										<label>Contact Name</label>
+										<input type='text' class='form-control' id='bookingImportContactName' placeholder='Optional...'>
+									</div>
+								</div>
+								<div class='col-md-6'>
+									<div class='form-group'>
+										<label>Event Description</label>
+										<input type='text' class='form-control' id='bookingImportDesc' placeholder='Optional...'>
+									</div>
+									<div class='form-group'>
+										<label>Event End Date and Time</label>
+										<div class='clearfix'></div>
+										<input type='text' class='form-control' style='width:50%;float:left' id='bookingImportStopDate' placeholder='January 1, 1901'>
+										<input type='text' class='form-control timepicker' style='width:50%;float:left' id='bookingImportStopTime' placeholder='10:00pm'>
+										<div class='clearfix'></div>
+									</div>
+									
+									<div class='form-group'>
+										<label>Group Size</label>
+										<input type='text' class='form-control' id='bookingImportSize' placeholder='0'>
+									</div>
+									
+									<div class='form-group'>
+										<label>Contact Email</label>
+										<input type='text' class='form-control' id='bookingImportContactEmail' placeholder='Optional...'>
+									</div>
+									<button id='bookingImportSubmit' class='btn btn-lg btn-primary pull-right'>Import Booking</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class='tab-pane' id='integrationCustomerExport'>
+				<div class='panel'>
+					<div class='panel-body'>
+						<h3 style='margin-top:0'>Customer Details Export Tool</h3>
+						This table shows information about every user that has ever completed a booking for your venue.
+						<br><br><button id='btnGetUserList' class='btn btn-md btn-primary'>Get User Information</button><br>
+						<table id='venueUsers' class='table table-striped table-condensed dtable' style='margin-top:20px'>
+							<thead><tr><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Total Spent</th><th># of Bookings</th><th>Last Booking</th></tr></thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>				
+			</div>
+			
+		</div>
+	</div>
+
+<script>
+	
+	var url = "";
+	var name = "";
+	
+	if (localStorage.getItem("venueRights"))
+	{
+		var rights = $.parseJSON(localStorage.getItem("venueRights"));
+		for (var i=0; i<rights.length; i++)
+		{
+			if (rights[i]['venueid'] == localStorage.getItem("activeProfile"))
+			{
+				url = rights[i]['url'];
+				name = rights[i]['venueName'];
+			}
+		}
+	}
+		
+	$("div.panel-body").each(function()
+	{
+		$(this).html($(this).html().replace(/DEMOLINK1URL/g,"/venue/" + url));
+		$(this).html($(this).html().replace(/DEMOLINK1TEXT/g,name));
+		$(this).html($(this).html().replace(/DEMOLINK2URL/g,"/reserve/book-an-event-at-" + url));
+		//$(this).html($(this).html().replace(/DEMOIFRAME1URL/g,"/reserve/book-an-event-at-" + url + "?iframe=true"));
+		$(this).html($(this).html().replace(/DEMOIFRAMEBUTTON1URL/g,"/reserve/book-an-event-at-" + url + "?iframe=true"));
+	});
+	
+	$("#demoLink1").empty().append(name);
+	$("#demoLink1").attr("href","/venue/" + url);
+	$("#demoLink2").attr("href","/reserve/book-an-event-at-" + url);
+	$("#demoIFrame1").attr("src","/reserve/book-an-event-at-" + url + "?iframe=true&displayHeader=true");
+	$("div.InviteBIG_Button").attr("data-url","/reserve/book-an-event-at-" + url + "?iframe=true");
+	
+	$("#bookingImportStartDate,#bookingImportStopDate").datepicker(
+	{
+		inline: true,
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "2010:+5",
+		onSelect: function(event){},
+		dateFormat: 'MM d, yy'
+	});
+	
+	$(".timepicker").timepicker();
+	
+	$("#bookingImportSubmit").on('click',function(event)
+	{
+		event.preventDefault();
+		if (ValidateBookingImportForm())
+		{
+			$("#bookingImportSubmit").attr("disabled",true);
+			$(this).parents("div.formpan").find("div.alert-danger").remove();
+			
+			var data = {
+				method: 'fImportBookingForm',
+				venueid: localStorage.getItem("activeProfile"),
+				name: $("#bookingImportName").val(),
+				desc: $("#bookingImportDesc").val(),
+				start: moment(new Date($("#bookingImportStartDate").val() + " " + $("#bookingImportStartTime").val())).format('X'),
+				stop: moment(new Date($("#bookingImportStopDate").val() + " " + $("#bookingImportStopTime").val())).format('X'),
+				price: $("#bookingImportPrice").val(),
+				size: $("#bookingImportSize").val(),
+				contactName: $("#bookingImportContactName").val(),
+				contactEmail: $("#bookingImportContactEmail").val()
+			};
+			
+			Post(data).then(function($data)
+			{				
+				if ($data['result'] == "success")
+				{
+					$("#bookingImportSubmit").parents("div.formpan").find("input").val("");
+					$("#bookingImportSubmit").removeClass("btn-primary").addClass("btn-success").text("Success!");
+					setTimeout(function(){$("#bookingImportSubmit").removeClass("btn-success").addClass("btn-primary").text("Import Booking");}, 2000);
+				}
+				else $("#bookingImportSubmit").after("<div class='clearfix'></div><div class='alert alert-danger'>" + $data['result'] + "</div>");
+				
+				$("#bookingImportSubmit").attr("disabled",false);
+			});
+		}
+	});
+	
+	$("#btnGetUserList").on('click',function(event)
+	{
+		event.preventDefault();
+		var data = {method:'fContactDump',venueid:localStorage.getItem("activeProfile")};
+		Post(data).then(function($data)
+		{				
+			if ($data['result'] == "success")
+			{
+				for (var i=0; i<$data['users'].length; i++)
+				{
+					var d = FormatDate($data['users'][i]['last'],"MMMM D, YYYY");
+					
+					$("#venueUsers tbody").append("<tr><td>" + $data['users'][i]['email'] + "</td><td>" + 
+					$data['users'][i]['firstname'] + "</td><td>" + $data['users'][i]['lastname'] + "</td><td>" + 
+					FormatDollars($data['users'][i]['total'],$data['users'][i]['currency']) + "</td><td>" + 
+					$data['users'][i]['bookings'] + "</td><td>" + d + "</td>" + 
+					"</tr>");
+				}
+			}
+			else $("#venueUsers tbody").append("<tr><td colspan=10>" + $data['result'] + "</td></tr>");
+		});
+	});
+	
+	function ValidateBookingImportForm()
+	{
+		var ret = true;
+		$("#bookingImportForm input").css({"border-color":"#CCC"});
+		
+		if ($("#bookingImportStartDate").val().length < 10)
+		{
+			$("#bookingImportStartDate").css({"border-color":"#F88"});
+			ret = false;
+		}
+		
+		if ($("#bookingImportStartTime").val().length < 5)
+		{
+			$("#bookingImportStartTime").css({"border-color":"#F88"});
+			ret = false;
+		}
+		
+		if ($("#bookingImportStopDate").val().length < 10)
+		{
+			$("#bookingImportStopDate").css({"border-color":"#F88"});
+			ret = false;
+		}
+		
+		if ($("#bookingImportStopTime").val().length < 5)
+		{
+			$("#bookingImportStopTime").css({"border-color":"#F88"});
+			ret = false;
+		}
+		
+		if ($("#bookingImportPrice").val().length < 1)
+		{
+			$("#bookingImportPrice").css({"border-color":"#F88"});
+			ret = false;
+		}
+		
+		if ($("#bookingImportSize").val().length < 1)
+		{
+			$("#bookingImportSize").css({"border-color":"#F88"});
+			ret = false;
+		}
+		
+		return ret;
+	}
+	
+</script>
+
+<script src='/inc/js/invitebig-integration.js?_=1455331660' type="text/javascript"></script>
+
+<script type="text/javascript">
+// Harish:- This script is used to hide header in Iframe
+
+$('#displayHeader').click(function() { // When Checkbox checked then hide/show the header
+	var $this = $(this);
+	if ($this.is(':checked')) {
+		$.ajax({
+			type: "POST",
+			url: "../../iframeheader.php",
+			data: {checkdata: "checked"},
+			success: function(output){
+				// if (window.location.href.indexOf('&displayHeader=true') > 0)
+					sessionStorage.setItem("displayHeader","true");
+				// else 
+				// 	sessionStorage.setItem("displayHeader","false");
+		    	
+		    	$("#demoIFrame1").attr("src","/reserve/book-an-event-at-" + url + "?iframe=true&displayHeader=true");
+		    	 
+                    // $("#bookHeaders").show();    
+                    // $("body").hide();
+                    // $("body").show();                    
+
+		    	$.ajax({
+					type: "GET",
+					success: function(output){
+						$("#iframecode").html('');
+						//$("div.bookHeading").show();
+             			//$("div.bookHeader").show();
+						$("#iframecode").append("&lt;iframe class='InviteBigIFrame' src='https://www.invitebig.com/reserve/book-an-event-at-"+url+"?iframe=true&displayHeader=true' style='width:100%;height:100%'&gt;&lt;/iframe &gt;");
+					}
+				});
+		    }
+		});
+	} else {
+		$.ajax({
+			type: "POST",
+			url: "../../iframeheader.php",
+			data: {checkdata: "unchecked"},
+			success: function(output){
+				$.ajax({
+				type: "GET",
+				success: function(output){
+					$("#iframecode").html('');
+					$("#iframecode").append("&lt;iframe class='InviteBigIFrame' src='https://www.invitebig.com/reserve/book-an-event-at-"+url+"?iframe=true&displayHeader=false' style='width:100%;height:100%'&gt;&lt;/iframe &gt;");
+				}
+				});	
+
+				if (window.location.href.indexOf('&displayHeader=false') > 0)
+					sessionStorage.setItem("displayHeader","false");
+				$("#demoIFrame1").attr("src","/reserve/book-an-event-at-" + url + "?iframe=true&displayHeader=false");
+		    	   
+                    $("#bookHeaders").hide();    
+                   
+		    	}
+		});
+	}
+});
+
+ 	// When page loads then check the isdisplay flag in iframe_header page then hide/show the header
+	$.ajax({ 
+	type: "GET",
+	url: "../../iframeheaderloads.php",
+	success: function(output){
+		var value = $.trim(output);
+		if(value=='show')
+		{
+			$('#displayHeader').attr('checked', true);
+			$("#demoIFrame1").attr("src","/reserve/book-an-event-at-" + url + "?iframe=true&displayHeader=true");
+			$("#iframecode").html('');
+			$("#iframecode").append("&lt;iframe class='InviteBigIFrame' src='https://www.invitebig.com/reserve/book-an-event-at-"+url+"?iframe=true&displayHeader=true' style='width:100%;height:100%'&gt;&lt;/iframe &gt;");
+				$("#bookHeaders").show();
+			}
+		else
+		{
+			$('#displayHeader').attr('checked', false);
+			$("#demoIFrame1").attr("src","/reserve/book-an-event-at-" + url + "?iframe=true&displayHeader=false");
+			$("#iframecode").html('');
+			$("#iframecode").append("&lt;iframe class='InviteBigIFrame' src='https://www.invitebig.com/reserve/book-an-event-at-"+url+"?iframe=true&displayHeader=false' style='width:100%;height:100%'&gt;&lt;/iframe &gt;");
+			$("#bookHeaders").hide();
+
+		}
+	}
+});
+</script>

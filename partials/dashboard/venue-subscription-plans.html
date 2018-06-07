@@ -1,0 +1,58 @@
+<div class='plan panel-body'>
+	<h2>Standard Venue Plan</h2>
+	<div class='planChoices'>
+		<div class='planChoice panel-body' data-plan='Standard Plan (monthly)' data-planid='standard-venue-monthly' data-cost='$49 per month'>
+			<div class='planPrice'>$49</div>
+			<div class='planPriceSub'>per month</div>
+			<button class='btn btn-sm btn-default'>SELECT</button>
+		</div>
+		<div class='planChoice panel-body' data-plan='Standard Plan (yearly)' data-planid='standard-venue-yearly' data-cost='$490 per year'>
+			<div class='planPrice'>$490</div>
+			<div class='planPriceSub'>per year</div>
+			<button class='btn btn-sm btn-default'>SELECT</button>
+		</div>
+	</div>
+</div>
+
+<!--		
+<div class='plan panel-body'>
+	<h2>Standard Plan</h2>
+	<div class='planChoices'>
+		<div class='planChoice panel-body' data-plan='Standard Plan (monthly)' data-planid='standard-venue-monthly' data-cost='$49 per month'>
+			<div class='planPrice'>$49</div>
+			<div class='planPriceSub'>per month</div>
+			<button class='btn btn-sm btn-default'>SELECT</button>
+		</div>
+		<div class='planChoice panel-body' data-plan='Standard Plan (yearly)' data-planid='standard-venue-yearly' data-cost='$490 per year'>
+			<div class='planPrice'>$490</div>
+			<div class='planPriceSub'>per year</div>
+			<button class='btn btn-sm btn-default'>SELECT</button>
+		</div>
+	</div>
+</div>
+-->		
+	
+<div class='plan panel-body' data-plan='Premium Plan' data-planid='premium'>
+	<h2>Premium Venue Plan</h2>
+	<div class='planPrice'>$99</div>
+	<div class='planPriceSub'>per month</div>
+	<button class='btn btn-md' style='background-color:#AAA;color:#FFF;border:none' disabled>COMING SOON</button>
+</div>
+<div class='clearfix'></div>
+
+<script>
+	$(".planChoice, .planChoice button").on('click',function(event)
+	{
+		event.preventDefault();
+		$(".planChoice").removeClass("active");
+		$(".planChoice button").empty().append("SELECT");
+		
+		var choice = $(this);
+		if ($(this).is("button"))
+			choice = $(this).parents("div.planChoice").first();
+			
+		choice.addClass('active');
+		choice.find("button").empty().append("SELECTED").blur();
+		
+	});
+</script>

@@ -1,0 +1,18 @@
+<form id='formAddNewRefund' class='form-horizontal' action='#'>
+	<div id='newRefundError' class='alert alert-danger' style='display:none'></div>
+	<input type='hidden' id='newRefundID' value=''>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Policy Name</label>
+		<div class='col-md-9'>
+			<input type='text' class='form-control' id='newRefundName' placeholder='Name of the refund policy'>
+		</div>
+	</div>
+	<div class='form-group'>
+		<label class='col-md-3 control-label'>Policy Details</label>
+		<div id='rPolicyList' class='col-md-9'>
+			<div class='rNewPolicyDetail'>
+				<b>+</b><i class='glyphicon glyphicon-list-alt'></i>
+			</div>
+		</div>
+	</div>
+</form>

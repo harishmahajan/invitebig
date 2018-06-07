@@ -1,0 +1,3 @@
+How do I turn on or turn off email based booking notifications?
+
+All users with the "manage bookings" role assigned in the venue profile page of the venue dashboard will receive email notifications about bookings.
